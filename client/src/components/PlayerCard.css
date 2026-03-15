@@ -1,0 +1,91 @@
+.player-card {
+  background: white;
+  border: 3px solid transparent;
+  border-radius: 20px;
+  padding: 16px 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  min-width: 110px;
+}
+
+.player-card:hover:not(:disabled) {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(108, 99, 255, 0.25);
+  border-color: var(--color-primary);
+}
+
+.player-card:active:not(:disabled) {
+  transform: scale(0.93);
+}
+
+.player-card--busy {
+  opacity: 0.55;
+  filter: grayscale(50%);
+}
+
+.player-card--me {
+  cursor: default;
+  border-color: var(--color-primary);
+  background: #f3f0ff;
+}
+
+.player-card__avatar-wrap {
+  position: relative;
+  width: 80px;
+  height: 80px;
+}
+
+.player-card__avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.player-card__initials {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--color-primary), #a78bfa);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.6rem;
+  font-weight: 900;
+}
+
+.player-card__badge {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  font-size: 1.2rem;
+  line-height: 1;
+  background: white;
+  border-radius: 50%;
+  padding: 2px;
+}
+
+.player-card__name {
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-align: center;
+  color: var(--color-text);
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.player-card__busy-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: var(--color-busy);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}

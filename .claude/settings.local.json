@@ -1,0 +1,27 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm --version)",
+      "Bash(npm create:*)",
+      "Read(//usr/local/bin/**)",
+      "Read(//Users/matthewkaplan/.volta/**)",
+      "Bash(command -v node)",
+      "Bash(mdfind -name node -onlyin /usr/local)",
+      "Read(//Users/matthewkaplan/**)",
+      "Read(//usr/local/lib/**)",
+      "Bash(/usr/local/bin/node --version)",
+      "Bash(/opt/homebrew/bin/brew install:*)",
+      "Bash(/opt/homebrew/bin/node --version)",
+      "Bash(/opt/homebrew/bin/npm --version)",
+      "Bash(/opt/homebrew/bin/npm install:*)",
+      "Bash(xcode-select --print-path)",
+      "Bash(xcode-select -p)",
+      "Bash(/opt/homebrew/bin/npm show:*)",
+      "Bash(timeout 5 /opt/homebrew/bin/node server/index.js)",
+      "Bash(/opt/homebrew/bin/npm run:*)",
+      "mcp__Claude_Preview__preview_start",
+      "Bash(lsof -ti:3001)",
+      "Bash(xargs kill:*)"
+    ]
+  }
+}

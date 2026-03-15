@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: family-games
+    env: node
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    disk:
+      name: sqlite-data
+      mountPath: /data
+      sizeGB: 1
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_PATH
+        value: /data/games.db
+      - key: UPLOAD_DIR
+        value: /data/uploads
+      - key: BASE_URL
+        sync: false
+      - key: SESSION_SECRET
+        generateValue: true

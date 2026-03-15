@@ -1,0 +1,220 @@
+.lobby-page {
+  gap: 0;
+  padding-bottom: 24px;
+}
+
+.lobby-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  padding-top: 8px;
+}
+
+.lobby-title {
+  font-size: 1.5rem;
+  font-weight: 900;
+  color: var(--color-primary);
+}
+
+.lobby-hint {
+  color: var(--color-muted);
+  font-size: 0.85rem;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.lobby-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  gap: 12px;
+  padding: 4px;
+}
+
+.lobby-empty {
+  text-align: center;
+  padding: 48px 16px;
+  color: var(--color-muted);
+  font-size: 1rem;
+}
+
+.lobby-footer {
+  display: flex;
+  flex-direction: column;
+  margin-top: 24px;
+}
+
+/* Login overlay */
+.login-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(30, 27, 75, 0.7);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  z-index: 300;
+  padding: 0;
+}
+
+.login-modal {
+  background: white;
+  border-radius: 32px 32px 0 0;
+  padding: 32px 24px 40px;
+  width: 100%;
+  max-width: 600px;
+  animation: slide-up 0.3s ease;
+  max-height: 90dvh;
+  overflow-y: auto;
+}
+
+@keyframes slide-up {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0); }
+}
+
+.login-title {
+  font-size: 1.4rem;
+  font-weight: 900;
+  text-align: center;
+  color: var(--color-primary);
+  margin-bottom: 20px;
+}
+
+.login-player-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.login-player-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 8px;
+  border: 3px solid #e5e7eb;
+  border-radius: 16px;
+  background: white;
+  cursor: pointer;
+  transition: border-color 0.15s, transform 0.1s;
+}
+
+.login-player-btn--selected {
+  border-color: var(--color-primary);
+  background: #f3f0ff;
+}
+
+.login-player-btn:active {
+  transform: scale(0.93);
+}
+
+.login-player-avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.login-player-initials {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--color-primary), #a78bfa);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  font-weight: 900;
+}
+
+.login-player-name {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-align: center;
+  color: var(--color-text);
+}
+
+.login-pin-hint {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--color-muted);
+  text-align: center;
+  margin-bottom: 8px;
+}
+
+.pin-key--empty {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/* Admin mode */
+.lobby-card-wrap {
+  position: relative;
+}
+
+.lobby-admin-btns {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  z-index: 10;
+}
+
+.lobby-admin-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: none;
+  font-size: 0.85rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  transition: transform 0.1s;
+}
+
+.lobby-admin-btn:active { transform: scale(0.88); }
+
+.lobby-admin-btn--edit  { background: #e0e7ff; }
+.lobby-admin-btn--delete { background: #fee2e2; }
+
+/* Delete confirm modal */
+.delete-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(30, 27, 75, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 400;
+  padding: 20px;
+}
+
+.delete-modal {
+  background: white;
+  border-radius: 24px;
+  padding: 28px 24px;
+  max-width: 340px;
+  width: 100%;
+  animation: bounce-in 0.3s ease;
+}
+
+.delete-title {
+  font-size: 1.3rem;
+  font-weight: 900;
+  color: var(--color-danger);
+  text-align: center;
+  margin-bottom: 8px;
+}
+
+.delete-hint {
+  font-size: 0.85rem;
+  color: var(--color-muted);
+  text-align: center;
+  margin-bottom: 4px;
+}

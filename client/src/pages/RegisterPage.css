@@ -1,0 +1,121 @@
+.register-page {
+  gap: 0;
+}
+
+.register-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.register-avatar {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  border: 4px dashed var(--color-primary);
+  cursor: pointer;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 8px;
+  background: #f3f0ff;
+  transition: border-color 0.2s, transform 0.15s;
+}
+
+.register-avatar:active {
+  transform: scale(0.95);
+}
+
+.register-avatar__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.register-avatar__placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  color: var(--color-primary);
+}
+
+.register-avatar__placeholder span:first-child {
+  font-size: 2.5rem;
+}
+
+.register-avatar__hint {
+  font-size: 0.6rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* PIN display */
+.pin-display {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  margin: 8px 0;
+}
+
+.pin-dot {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 3px solid var(--color-primary);
+  transition: background 0.2s, transform 0.2s;
+}
+
+.pin-dot--filled {
+  background: var(--color-primary);
+  transform: scale(1.2);
+}
+
+/* PIN pad */
+.pin-pad {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.pin-key {
+  height: 64px;
+  border: 2px solid #e5e7eb;
+  border-radius: 16px;
+  background: white;
+  font-size: 1.3rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.1s, background 0.1s;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+.pin-key:active:not(:disabled) {
+  transform: scale(0.9);
+  background: #f3f0ff;
+}
+
+.pin-key--empty {
+  visibility: hidden;
+}
+
+.register-login-hint {
+  text-align: center;
+  color: var(--color-muted);
+  font-size: 0.85rem;
+  margin-top: 16px;
+}
+
+.register-login-hint a {
+  color: var(--color-primary);
+  font-weight: 700;
+  text-decoration: none;
+}

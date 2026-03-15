@@ -1,0 +1,79 @@
+.result-banner {
+  position: relative;
+  overflow: hidden;
+  border-radius: 24px;
+  padding: 24px 20px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.result-banner--win {
+  background: linear-gradient(135deg, #fef9c3, #fde68a);
+  border: 3px solid #f59e0b;
+}
+
+.result-banner--tie {
+  background: linear-gradient(135deg, #e0e7ff, #c7d2fe);
+  border: 3px solid var(--color-primary);
+}
+
+.result-banner--lose {
+  background: linear-gradient(135deg, #fce7f3, #fbcfe8);
+  border: 3px solid #ec4899;
+}
+
+.result-banner__moves {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+}
+
+.result-banner__move {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.result-banner__move-emoji {
+  font-size: 3rem;
+  line-height: 1;
+}
+
+.result-banner__move-name {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--color-muted);
+}
+
+.result-banner__vs {
+  font-size: 1.2rem;
+  font-weight: 900;
+  color: var(--color-muted);
+}
+
+.result-banner__outcome {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  font-size: 1.6rem;
+  font-weight: 900;
+}
+
+.result-banner__icon {
+  font-size: 2rem;
+}
+
+/* Confetti */
+.confetti-piece {
+  position: absolute;
+  top: -20px;
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  animation: confetti-fall linear forwards;
+}

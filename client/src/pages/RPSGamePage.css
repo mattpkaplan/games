@@ -1,0 +1,206 @@
+.rps-page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+  background: var(--color-bg);
+  padding: 16px;
+  max-width: 600px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* Header */
+.rps-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 12px 0 16px;
+}
+
+.rps-score-side {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.rps-round-info {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+}
+
+.rps-round-badge {
+  background: var(--color-primary);
+  color: white;
+  font-size: 0.7rem;
+  font-weight: 800;
+  padding: 4px 10px;
+  border-radius: 100px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.rps-round-badge--over {
+  background: var(--color-warning);
+}
+
+/* Main area */
+.rps-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+}
+
+/* Status (connecting / waiting) */
+.rps-status {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  color: var(--color-muted);
+}
+
+.rps-my-choice-big {
+  font-size: 5rem;
+  line-height: 1;
+  animation: bounce-in 0.3s ease;
+}
+
+/* Choose hint */
+.rps-choose-hint {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--color-text);
+  text-align: center;
+}
+
+/* Choice buttons grid */
+.rps-choices {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  width: 100%;
+}
+
+@media (min-width: 420px) {
+  .rps-choices {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Reveal area */
+.rps-reveal-area {
+  width: 100%;
+}
+
+/* Game over */
+.rps-game-over {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  width: 100%;
+  text-align: center;
+}
+
+.rps-game-over-trophy {
+  font-size: 6rem;
+  line-height: 1;
+  animation: bounce-in 0.5s ease;
+}
+
+.rps-game-over-title {
+  font-size: 2rem;
+  font-weight: 900;
+  color: var(--color-primary);
+}
+
+.rps-final-scores {
+  width: 100%;
+  background: white;
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: var(--shadow);
+}
+
+.rps-final-score-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  gap: 12px;
+}
+
+.rps-final-vs {
+  font-size: 1rem;
+  font-weight: 900;
+  color: var(--color-muted);
+}
+
+.rps-play-again-area {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+.rps-waiting-vote {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  color: var(--color-muted);
+  font-size: 0.9rem;
+}
+
+.rps-rematch-request {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  background: #f3f0ff;
+  border-radius: 20px;
+  padding: 20px;
+  border: 2px solid var(--color-primary);
+}
+
+.rps-rematch-msg {
+  font-size: 1.1rem;
+  text-align: center;
+  color: var(--color-text);
+}
+
+.rps-declined-msg {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 16px;
+  color: var(--color-muted);
+  font-size: 0.95rem;
+}
+
+.rps-declined-icon {
+  font-size: 2.5rem;
+}
+
+/* Waiting dots (shared) */
+.waiting-dots {
+  display: flex;
+  gap: 8px;
+}
+
+.waiting-dots span {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  animation: pulse 1.2s ease-in-out infinite;
+}
+
+.waiting-dots span:nth-child(2) { animation-delay: 0.2s; }
+.waiting-dots span:nth-child(3) { animation-delay: 0.4s; }
