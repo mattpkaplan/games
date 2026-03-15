@@ -30,8 +30,9 @@ export default function PlayerCard({ player, onClick, isMe }) {
         )}
         <span className={`player-card__badge ${available ? 'player-card__badge--on' : 'player-card__badge--off'}`} />
       </div>
-      <span className="player-card__name">{isMe ? `${player.name} (You)` : player.name}</span>
-      {!available && <span className="player-card__busy-label">Busy</span>}
+      <span className="player-card__name">{player.name}</span>
+      {isMe && <span className="player-card__you-badge">You</span>}
+      {!available && !isMe && <span className="player-card__busy-label">Busy</span>}
     </button>
   );
 }

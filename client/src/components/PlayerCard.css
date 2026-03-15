@@ -90,6 +90,16 @@
   white-space: nowrap;
 }
 
+.player-card__you-badge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  background: #ede9fe;
+  border-radius: 20px;
+  padding: 2px 10px;
+  letter-spacing: 0.04em;
+}
+
 .player-card__busy-label {
   font-size: 0.65rem;
   font-weight: 700;
