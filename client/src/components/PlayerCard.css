@@ -1,16 +1,16 @@
 .player-card {
   background: white;
   border: 3px solid transparent;
-  border-radius: 20px;
-  padding: 16px 12px;
+  border-radius: 24px;
+  padding: 20px 16px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   cursor: pointer;
   transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-  min-width: 110px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.10);
+  min-width: 130px;
 }
 
 .player-card:hover:not(:disabled) {
@@ -36,43 +36,51 @@
 
 .player-card__avatar-wrap {
   position: relative;
-  width: 80px;
-  height: 80px;
+  width: 96px;
+  height: 96px;
 }
 
 .player-card__avatar {
-  width: 80px;
-  height: 80px;
+  width: 96px;
+  height: 96px;
   border-radius: 50%;
   object-fit: cover;
 }
 
 .player-card__initials {
-  width: 80px;
-  height: 80px;
+  width: 96px;
+  height: 96px;
   border-radius: 50%;
   background: linear-gradient(135deg, var(--color-primary), #a78bfa);
   color: white;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.6rem;
+  font-size: 2rem;
   font-weight: 900;
 }
 
 .player-card__badge {
   position: absolute;
-  bottom: 0;
-  right: 0;
-  font-size: 1.2rem;
-  line-height: 1;
-  background: white;
+  bottom: 4px;
+  right: 4px;
+  width: 18px;
+  height: 18px;
   border-radius: 50%;
-  padding: 2px;
+  border: 3px solid white;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.18);
+}
+
+.player-card__badge--on {
+  background: #22c55e;
+}
+
+.player-card__badge--off {
+  background: #94a3b8;
 }
 
 .player-card__name {
-  font-size: 0.85rem;
+  font-size: 0.95rem;
   font-weight: 700;
   text-align: center;
   color: var(--color-text);

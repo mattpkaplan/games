@@ -28,9 +28,7 @@ export default function PlayerCard({ player, onClick, isMe }) {
         ) : (
           <div className="player-card__initials">{initials}</div>
         )}
-        <span className={`player-card__badge ${available ? 'player-card__badge--on' : 'player-card__badge--off'}`}>
-          {available ? '🟢' : '🌙'}
-        </span>
+        <span className={`player-card__badge ${available ? 'player-card__badge--on' : 'player-card__badge--off'}`} />
       </div>
       <span className="player-card__name">{isMe ? `${player.name} (You)` : player.name}</span>
       {!available && <span className="player-card__busy-label">Busy</span>}
