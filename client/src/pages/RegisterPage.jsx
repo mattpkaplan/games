@@ -71,7 +71,7 @@ export default function RegisterPage() {
           ) : (
             <div className="register-avatar__placeholder">
               <span>📷</span>
-              <span className="register-avatar__hint">Add your photo</span>
+              <span className="register-avatar__hint">Add Photo</span>
             </div>
           )}
           <input

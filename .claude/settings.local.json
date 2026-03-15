@@ -21,7 +21,8 @@
       "Bash(/opt/homebrew/bin/npm run:*)",
       "mcp__Claude_Preview__preview_start",
       "Bash(lsof -ti:3001)",
-      "Bash(xargs kill:*)"
+      "Bash(xargs kill:*)",
+      "WebFetch(domain:family-games.onrender.com)"
     ]
   }
 }
