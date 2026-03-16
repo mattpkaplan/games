@@ -36,6 +36,7 @@ export default function GameSelectPage() {
     try {
       const { token } = await api.post('/api/sessions', {
         playerAId: player.id,
+        playerBId: opponentId,
         gameType: gameId,
       });
       navigate(`/share/${token}`, { state: { opponent } });

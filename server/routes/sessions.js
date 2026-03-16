@@ -6,10 +6,10 @@ const router = express.Router();
 
 // POST /api/sessions — create a game session
 router.post('/', (req, res) => {
-  const { playerAId, gameType } = req.body;
+  const { playerAId, playerBId, gameType } = req.body;
   if (!playerAId) return res.status(400).json({ error: 'playerAId required' });
 
-  const { id, token } = createSession(playerAId, gameType || 'rps');
+  const { id, token } = createSession(playerAId, gameType || 'rps', playerBId || null);
   const baseUrl = process.env.BASE_URL || 'http://localhost:3001';
   const shareUrl = `${baseUrl}/join/${token}`;
 

@@ -1,15 +1,15 @@
 const { v4: uuidv4 } = require('uuid');
 const db = require('../db');
 
-function createSession(playerAId, gameType = 'rps') {
+function createSession(playerAId, gameType = 'rps', playerBId = null) {
   const token = uuidv4();
   const expiresAt = new Date(Date.now() + 60 * 60 * 1000).toISOString(); // 1 hour
 
   const stmt = db.prepare(`
-    INSERT INTO game_sessions (token, game_type, player_a_id, expires_at)
-    VALUES (?, ?, ?, ?)
+    INSERT INTO game_sessions (token, game_type, player_a_id, player_b_id, expires_at)
+    VALUES (?, ?, ?, ?, ?)
   `);
-  const result = stmt.run(token, gameType, playerAId, expiresAt);
+  const result = stmt.run(token, gameType, playerAId, playerBId, expiresAt);
 
   return { id: result.lastInsertRowid, token };
 }
