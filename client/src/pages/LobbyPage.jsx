@@ -153,9 +153,9 @@ export default function LobbyPage() {
     };
   }, []);
 
-  async function toggleAvailability() {
+  async function toggleAvailability(newVal) {
     if (!player) return;
-    const newVal = !player.available;
+    newVal = Boolean(newVal);
     try {
       const updated = await api.patch(`/api/players/${player.id}/availability`, { available: newVal });
       setPlayer({ ...player, available: updated.available });

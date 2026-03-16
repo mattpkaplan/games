@@ -14,17 +14,21 @@ export default function AvailabilityToggle({ available, onChange, player, onEdit
         }
       </div>
 
-      {/* Toggle pill */}
-      <button
-        className={`avail-bar__toggle ${available ? 'avail-bar__toggle--on' : 'avail-bar__toggle--off'}`}
-        onClick={() => onChange(!available)}
-        aria-label={available ? 'Tap to go busy' : 'Tap to go available'}
-      >
-        <span className="avail-bar__toggle-knob" />
-        <span className="avail-bar__toggle-label">
-          {available ? "I'm Ready!" : "I'm Busy"}
-        </span>
-      </button>
+      {/* Segmented toggle: I'm Ready | I'm Busy */}
+      <div className="avail-bar__segment">
+        <button
+          className={`avail-bar__seg-btn avail-bar__seg-btn--ready ${available ? 'avail-bar__seg-btn--active-ready' : ''}`}
+          onClick={() => onChange(true)}
+        >
+          🟢 I'm Ready
+        </button>
+        <button
+          className={`avail-bar__seg-btn avail-bar__seg-btn--busy ${!available ? 'avail-bar__seg-btn--active-busy' : ''}`}
+          onClick={() => onChange(false)}
+        >
+          🌙 I'm Busy
+        </button>
+      </div>
 
       {/* Edit pencil */}
       <button className="avail-bar__edit" onClick={onEdit} title="Edit profile">

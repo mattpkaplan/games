@@ -34,49 +34,42 @@
   box-shadow: 0 1px 6px rgba(0,0,0,0.15);
 }
 
-/* Toggle pill */
-.avail-bar__toggle {
+/* Segmented control */
+.avail-bar__segment {
   flex: 1;
   display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 16px;
+  background: #e2e8f0;
+  border-radius: 50px;
+  padding: 3px;
+  gap: 2px;
+}
+
+.avail-bar__seg-btn {
+  flex: 1;
+  padding: 8px 10px;
   border: none;
   border-radius: 50px;
-  font-size: 1rem;
-  font-weight: 800;
+  font-size: 0.85rem;
+  font-weight: 700;
   cursor: pointer;
-  transition: background 0.2s, transform 0.1s;
+  background: transparent;
+  color: #64748b;
+  transition: background 0.15s, color 0.15s, transform 0.1s;
+  white-space: nowrap;
 }
 
-.avail-bar__toggle:active { transform: scale(0.96); }
+.avail-bar__seg-btn:active { transform: scale(0.95); }
 
-.avail-bar__toggle--on {
+.avail-bar__seg-btn--active-ready {
   background: #22c55e;
   color: white;
+  box-shadow: 0 1px 4px rgba(34,197,94,0.4);
 }
 
-.avail-bar__toggle--off {
-  background: #e2e8f0;
-  color: #64748b;
-}
-
-.avail-bar__toggle-knob {
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  flex-shrink: 0;
-  background: rgba(255,255,255,0.85);
-  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-}
-
-.avail-bar__toggle--off .avail-bar__toggle-knob {
+.avail-bar__seg-btn--active-busy {
   background: #94a3b8;
-}
-
-.avail-bar__toggle-label {
-  flex: 1;
-  text-align: left;
+  color: white;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.15);
 }
 
 /* Edit button */
