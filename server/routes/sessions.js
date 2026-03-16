@@ -66,12 +66,13 @@ router.patch('/:token/decline', (req, res) => {
   db.prepare("UPDATE game_sessions SET status = 'declined' WHERE token = ?").run(req.params.token);
 
   const io = req.app.get('io');
-  // Get decliner's name for friendly message
-  const player = playerBId
-    ? db.prepare('SELECT name FROM players WHERE id = ?').get(playerBId)
+  // Use id from request body, or fall back to the session's stored player_b_id
+  const declinerId = playerBId || session.player_b_id;
+  const decliner = declinerId
+    ? db.prepare('SELECT name FROM players WHERE id = ?').get(declinerId)
     : null;
   io.to(`session:${req.params.token}`).emit('invite_declined', {
-    byPlayerName: player ? player.name : 'the other player',
+    byPlayerName: decliner ? decliner.name : 'the other player',
   });
 
   res.json({ ok: true });
