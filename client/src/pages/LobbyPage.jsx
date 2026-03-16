@@ -8,7 +8,7 @@ import AvailabilityToggle from '../components/AvailabilityToggle.jsx';
 import './LobbyPage.css';
 
 // Login modal component
-function LoginModal({ players, onLogin, preselectedId = '' }) {
+function LoginModal({ players, onLogin, onClose, preselectedId = '' }) {
   const [selectedId, setSelectedId] = useState(preselectedId);
   const [pin, setPin] = useState('');
   const [error, setError] = useState('');
@@ -43,7 +43,13 @@ function LoginModal({ players, onLogin, preselectedId = '' }) {
     const initials = selectedPlayer.name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0,2);
     return (
       <div className="login-overlay">
-        <div className="login-modal">
+        <div className="login-modal" style={{ position: 'relative' }}>
+          <button onClick={onClose} style={{
+            position: 'absolute', top: 10, right: 12,
+            background: 'none', border: 'none', fontSize: '1.4rem',
+            color: '#94a3b8', cursor: 'pointer', lineHeight: 1, padding: 4,
+          }}>✕</button>
+
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, marginBottom: 8 }}>
             {selectedPlayer.avatar_url
               ? <img src={selectedPlayer.avatar_url} alt={selectedPlayer.name} className="login-player-avatar" style={{ width: 72, height: 72, borderRadius: '50%', objectFit: 'cover' }} />
@@ -76,10 +82,6 @@ function LoginModal({ players, onLogin, preselectedId = '' }) {
           {error && <div className="error-msg">{error}</div>}
           <button className="btn btn-primary btn-full" onClick={handleLogin} disabled={loading}>
             {loading ? 'Checking...' : 'Enter 🚀'}
-          </button>
-          <button style={{ background: 'none', border: 'none', color: '#94a3b8', fontSize: '0.85rem', marginTop: 8, cursor: 'pointer' }}
-            onClick={() => setSelectedId('')}>
-            Not {selectedPlayer.name}? Switch →
           </button>
         </div>
       </div>
@@ -190,7 +192,7 @@ export default function LobbyPage() {
   return (
     <div className="page lobby-page">
       {showLogin && (
-        <LoginModal players={players} onLogin={handleLoginSuccess} preselectedId={loginPreselect} />
+        <LoginModal players={players} onLogin={handleLoginSuccess} preselectedId={loginPreselect} onClose={() => setShowLogin(false)} />
       )}
 
       <div className="lobby-header">
