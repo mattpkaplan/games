@@ -8,27 +8,39 @@ export default function JoinPage() {
   const { token } = useParams();
   const navigate = useNavigate();
   const { player } = usePlayer();
-  const [session, setSession] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const [session,   setSession]   = useState(null);
+  const [players,   setPlayers]   = useState([]);
+  const [selectedId, setSelectedId] = useState(null);
+  const [loading,   setLoading]   = useState(true);
+  const [error,     setError]     = useState('');
   const [responding, setResponding] = useState(false);
 
   useEffect(() => {
-    api.get(`/api/sessions/${token}`)
-      .then((s) => {
+    Promise.all([
+      api.get(`/api/sessions/${token}`),
+      api.get('/api/players'),
+    ])
+      .then(([s, ps]) => {
         if (s.status === 'active') { navigate(`/game/${token}`); return; }
         if (s.status !== 'pending') { setError(`This invite is ${s.status}.`); return; }
         setSession(s);
+        // exclude the inviter from the picker
+        setPlayers(ps.filter(p => String(p.id) !== String(s.player_a_id)));
       })
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false));
   }, [token]);
 
+  // If already logged in, pre-select ourselves
+  useEffect(() => {
+    if (player && !selectedId) setSelectedId(player.id);
+  }, [player?.id]);
+
   async function handleAccept() {
     setResponding(true);
     try {
       await api.patch(`/api/sessions/${token}/accept`, {
-        playerBId: player?.id ?? null,
+        playerBId: selectedId ?? null,
       });
       navigate(`/game/${token}`);
     } catch (err) {
@@ -56,6 +68,7 @@ export default function JoinPage() {
   );
 
   const initials = session?.player_a_name?.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+  const selectedPlayer = players.find(p => String(p.id) === String(selectedId));
 
   return (
     <div className="page join-page">
@@ -74,6 +87,29 @@ export default function JoinPage() {
         <div className="join-game-name">🪨📄✂️ Rock, Paper, Scissors!</div>
       </div>
 
+      {/* Who are you? — compact avatar row (hidden if already logged in) */}
+      {!player && (
+        <div className="join-who">
+          <p className="join-who-label">Who are you?</p>
+          <div className="join-who-row">
+            {players.map(p => {
+              const ini = p.name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+              const sel = String(p.id) === String(selectedId);
+              return (
+                <button key={p.id} className={`join-who-btn ${sel ? 'join-who-btn--sel' : ''}`}
+                  onClick={() => setSelectedId(p.id)}>
+                  {p.avatar_url
+                    ? <img src={p.avatar_url} alt={p.name} className="join-who-avatar" />
+                    : <div className="join-who-initials">{ini}</div>
+                  }
+                  <span className="join-who-name">{p.name.split(' ')[0]}</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
       {/* Big two-button choice */}
       <div className="join-buttons">
         <button
@@ -82,7 +118,7 @@ export default function JoinPage() {
           disabled={responding}
         >
           <span className="join-btn-icon">✅</span>
-          <span>Let's Play!</span>
+          <span>Let's Play{selectedPlayer ? `, ${selectedPlayer.name.split(' ')[0]}!` : '!'}</span>
         </button>
 
         <button

@@ -17,13 +17,15 @@ const PHASE = {
 const MOVE_EMOJI = { rock: '🤜', paper: '🖐️', scissors: '✌️' };
 const IDLE_FIST  = '✊';
 
-// side = 'a' (left) or 'b' (right)
-function getFistState(phase, move, side, isWinner, countdownStep, isReady) {
+// side = 'a' (left) or 'b' (right); lastMove = previous round's move to show while waiting
+function getFistState(phase, move, side, isWinner, countdownStep, isReady, lastMove) {
   if (countdownStep === 'shoot') return { emoji: MOVE_EMOJI[move] || IDLE_FIST, mod: `reveal-${side}` };
   if (countdownStep)             return { emoji: IDLE_FIST, mod: 'shaking' };
   if (phase === PHASE.REVEAL)    return { emoji: MOVE_EMOJI[move] || IDLE_FIST, mod: `reveal-${side}` };
   if (phase === PHASE.GAME_OVER) return { emoji: isWinner ? '👍' : '👎', mod: isWinner ? 'winner' : 'loser' };
   if (isReady)                   return { emoji: IDLE_FIST, mod: 'ready' };
+  // Keep showing the previous round's move until a new choice is made
+  if (lastMove)                  return { emoji: MOVE_EMOJI[lastMove], mod: 'idle' };
   return { emoji: IDLE_FIST, mod: 'idle' };
 }
 
@@ -37,6 +39,7 @@ export default function RPSGamePage() {
   const [myRole,         setMyRole]         = useState(null);
   const [myMove,         setMyMove]         = useState(null);
   const [opponentChose,  setOpponentChose]  = useState(false);
+  const [lastMoves,      setLastMoves]      = useState({ a: null, b: null });
   const [reveal,         setReveal]         = useState(null);
   const [scores,         setScores]         = useState({ a: 0, b: 0 });
   const [gameOver,       setGameOver]       = useState(null);
@@ -85,6 +88,7 @@ export default function RPSGamePage() {
     s.on('rps_reveal', (data) => {
       setCountdownStep(null); setReveal(data);
       setScores(data.scores); setCurrentRound(data.round);
+      setLastMoves({ a: data.moveA, b: data.moveB });
       setPhase(PHASE.REVEAL);
     });
 
@@ -104,7 +108,7 @@ export default function RPSGamePage() {
 
     s.on('new_game', () => {
       setGameOver(null); setReveal(null); setMyMove(null); setCountdownStep(null);
-      setOpponentChose(false);
+      setOpponentChose(false); setLastMoves({ a: null, b: null });
       setPlayAgainState('idle'); setPlayAgainAsker(null);
       setScores({ a: 0, b: 0 }); setCurrentRound(1);
     });
@@ -137,8 +141,8 @@ export default function RPSGamePage() {
   const bIsReady = (myRole === 'b' && !!myMove) || (myRole === 'a' && opponentChose);
   const showReadyBadge = phase === PHASE.CHOOSING || phase === PHASE.WAITING;
 
-  const aFist = getFistState(phase, reveal?.moveA, 'a', aIsWinner, countdownStep, aIsReady);
-  const bFist = getFistState(phase, reveal?.moveB, 'b', bIsWinner, countdownStep, bIsReady);
+  const aFist = getFistState(phase, reveal?.moveA, 'a', aIsWinner, countdownStep, aIsReady, lastMoves.a);
+  const bFist = getFistState(phase, reveal?.moveB, 'b', bIsWinner, countdownStep, bIsReady, lastMoves.b);
 
   let resultLabel = '', resultClass = '';
   if (phase === PHASE.REVEAL && reveal) {
