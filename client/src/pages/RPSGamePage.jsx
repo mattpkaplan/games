@@ -17,12 +17,13 @@ const PHASE = {
 const MOVE_EMOJI = { rock: '🤜', paper: '🖐️', scissors: '✌️' };
 const IDLE_FIST  = '✊';
 
-function getFistState(phase, move, isMe, iWon, countdownStep) {
-  if (countdownStep === 'shoot')  return { emoji: MOVE_EMOJI[move] || IDLE_FIST, mod: isMe ? 'reveal-me' : 'reveal-opp' };
-  if (countdownStep)              return { emoji: IDLE_FIST, mod: 'shaking' };
-  if (phase === PHASE.REVEAL)     return { emoji: MOVE_EMOJI[move] || IDLE_FIST, mod: isMe ? 'reveal-me' : 'reveal-opp' };
-  if (phase === PHASE.GAME_OVER)  return { emoji: iWon ? '👍' : '👎', mod: iWon ? 'winner' : 'loser' };
-  if (phase === PHASE.WAITING && isMe) return { emoji: IDLE_FIST, mod: 'ready' };
+// side = 'a' (left) or 'b' (right)
+function getFistState(phase, move, side, isWinner, countdownStep, isReady) {
+  if (countdownStep === 'shoot') return { emoji: MOVE_EMOJI[move] || IDLE_FIST, mod: `reveal-${side}` };
+  if (countdownStep)             return { emoji: IDLE_FIST, mod: 'shaking' };
+  if (phase === PHASE.REVEAL)    return { emoji: MOVE_EMOJI[move] || IDLE_FIST, mod: `reveal-${side}` };
+  if (phase === PHASE.GAME_OVER) return { emoji: isWinner ? '👍' : '👎', mod: isWinner ? 'winner' : 'loser' };
+  if (isReady)                   return { emoji: IDLE_FIST, mod: 'ready' };
   return { emoji: IDLE_FIST, mod: 'idle' };
 }
 
@@ -35,6 +36,7 @@ export default function RPSGamePage() {
   const [countdownStep,  setCountdownStep]  = useState(null);
   const [myRole,         setMyRole]         = useState(null);
   const [myMove,         setMyMove]         = useState(null);
+  const [opponentChose,  setOpponentChose]  = useState(false);
   const [reveal,         setReveal]         = useState(null);
   const [scores,         setScores]         = useState({ a: 0, b: 0 });
   const [gameOver,       setGameOver]       = useState(null);
@@ -45,7 +47,7 @@ export default function RPSGamePage() {
 
   const socketRef = useRef(socket);
 
-  // Separate effect: assign role whenever player or sessionInfo loads (fixes race condition)
+  // Assign role whenever player or sessionInfo loads (fixes race condition)
   useEffect(() => {
     if (!sessionInfo) return;
     if (player && String(sessionInfo.playerAId) === String(player.id)) {
@@ -53,8 +55,7 @@ export default function RPSGamePage() {
     } else if (player && sessionInfo.playerBId && String(sessionInfo.playerBId) === String(player.id)) {
       setMyRole('b');
     } else if (!sessionInfo.playerBId) {
-      // Anonymous accept: anyone who isn't player A is player B
-      setMyRole('b');
+      setMyRole('b'); // anonymous accept
     }
   }, [player?.id, sessionInfo?.playerAId, sessionInfo?.playerBId]);
 
@@ -74,10 +75,12 @@ export default function RPSGamePage() {
 
     s.on('choose_now', () => {
       setCountdownStep(null); setMyMove(null); setReveal(null);
+      setOpponentChose(false);
       setPhase(PHASE.CHOOSING);
     });
 
-    s.on('rps_waiting', () => setPhase(PHASE.WAITING));
+    s.on('rps_waiting',    () => setPhase(PHASE.WAITING));
+    s.on('opponent_chose', () => setOpponentChose(true));
 
     s.on('rps_reveal', (data) => {
       setCountdownStep(null); setReveal(data);
@@ -101,13 +104,14 @@ export default function RPSGamePage() {
 
     s.on('new_game', () => {
       setGameOver(null); setReveal(null); setMyMove(null); setCountdownStep(null);
+      setOpponentChose(false);
       setPlayAgainState('idle'); setPlayAgainAsker(null);
       setScores({ a: 0, b: 0 }); setCurrentRound(1);
     });
 
     return () => {
       ['session_state','opponent_joined','countdown_step','choose_now','rps_waiting',
-       'rps_reveal','rps_game_over','play_again_requested','play_again_declined','new_game']
+       'opponent_chose','rps_reveal','rps_game_over','play_again_requested','play_again_declined','new_game']
         .forEach(e => s.off(e));
       s.disconnect();
     };
@@ -119,19 +123,22 @@ export default function RPSGamePage() {
     socket.emit('rps_choose', { token, playerId: player?.id, move });
   }
 
-  // ── Derived values ──────────────────────────────────────────────────
-  const myScore  = myRole === 'a' ? scores.a : scores.b;
-  const oppScore = myRole === 'a' ? scores.b : scores.a;
-  const myName   = player?.name || 'You';
-  const oppName  = myRole === 'a' ? sessionInfo?.playerBName : sessionInfo?.playerAName;
+  // ── Layout: Player A always left, Player B always right ─────────────
+  const aName = sessionInfo?.playerAName || '...';
+  const bName = sessionInfo?.playerBName || '...';
+  const oppName = myRole === 'a' ? bName : aName;
 
-  const iWon = gameOver ? String(gameOver.winnerId) === String(player?.id) : false;
+  const iWon     = gameOver ? String(gameOver.winnerId) === String(player?.id) : false;
+  const aIsWinner = gameOver ? String(gameOver.winnerId) === String(sessionInfo?.playerAId) : false;
+  const bIsWinner = gameOver ? !aIsWinner : false;
 
-  const myRevealMove  = reveal ? (myRole === 'a' ? reveal.moveA : reveal.moveB) : myMove;
-  const oppRevealMove = reveal ? (myRole === 'a' ? reveal.moveB : reveal.moveA) : null;
+  // Who has chosen (shows "Ready!" badge)
+  const aIsReady = (myRole === 'a' && !!myMove) || (myRole === 'b' && opponentChose);
+  const bIsReady = (myRole === 'b' && !!myMove) || (myRole === 'a' && opponentChose);
+  const showReadyBadge = phase === PHASE.CHOOSING || phase === PHASE.WAITING;
 
-  const myFist  = getFistState(phase, myRevealMove,  true,  iWon,  countdownStep);
-  const oppFist = getFistState(phase, oppRevealMove, false, !iWon, countdownStep);
+  const aFist = getFistState(phase, reveal?.moveA, 'a', aIsWinner, countdownStep, aIsReady);
+  const bFist = getFistState(phase, reveal?.moveB, 'b', bIsWinner, countdownStep, bIsReady);
 
   let resultLabel = '', resultClass = '';
   if (phase === PHASE.REVEAL && reveal) {
@@ -151,11 +158,11 @@ export default function RPSGamePage() {
   return (
     <div className="rps-page">
 
-      {/* ── HEADER ── opponent left, me right ── */}
+      {/* ── HEADER ── A left, B right ── */}
       <div className="rps-header">
         <div className="rps-player-col">
-          <span className="rps-player-name">{oppName || 'Opponent'}</span>
-          <StarScore score={oppScore} total={3} />
+          <span className="rps-player-name">{aName}</span>
+          <StarScore score={scores.a} total={3} />
         </div>
         <div className="rps-round-info">
           <span className={`rps-round-badge ${phase === PHASE.GAME_OVER ? 'rps-round-badge--over' : ''}`}>
@@ -163,25 +170,28 @@ export default function RPSGamePage() {
           </span>
         </div>
         <div className="rps-player-col">
-          <span className="rps-player-name">{myName}</span>
-          <StarScore score={myScore} total={3} />
+          <span className="rps-player-name">{bName}</span>
+          <StarScore score={scores.b} total={3} />
         </div>
       </div>
 
-      {/* ── ARENA ── opponent left, me right ── */}
+      {/* ── ARENA ── A left, B right ── */}
       <div className="rps-arena">
 
-        {/* Opponent fist (left, faces right) */}
-        <div className={`rps-fist rps-fist--opp rps-fist--${oppFist.mod}`}>
-          <span className="rps-fist__emoji" key={`opp-${phase}-${countdownStep}`}>
-            {oppFist.emoji}
+        {/* Player A fist — left side, faces right (no mirror) */}
+        <div className={`rps-fist rps-fist--a rps-fist--${aFist.mod}`}>
+          <span className="rps-fist__emoji" key={`a-${phase}-${countdownStep}`}>
+            {aFist.emoji}
           </span>
-          {phase === PHASE.REVEAL && oppRevealMove && (
-            <span className="rps-fist__label">{oppRevealMove.toUpperCase()}</span>
+          {showReadyBadge && aIsReady && (
+            <span className="rps-fist__badge rps-fist__badge--ready">Ready!</span>
+          )}
+          {phase === PHASE.REVEAL && reveal?.moveA && (
+            <span className="rps-fist__label">{reveal.moveA.toUpperCase()}</span>
           )}
         </div>
 
-        {/* Center: countdown word or round result */}
+        {/* Center */}
         <div className="rps-arena-center">
           {countdownStep && (
             <span className="rps-countdown-word" key={countdownStep}>{countdownWord}</span>
@@ -196,16 +206,16 @@ export default function RPSGamePage() {
           )}
         </div>
 
-        {/* My fist (right, faces left) */}
-        <div className={`rps-fist rps-fist--me rps-fist--${myFist.mod}`}>
-          <span className="rps-fist__emoji" key={`me-${phase}-${countdownStep}`}>
-            {myFist.emoji}
+        {/* Player B fist — right side, faces left (scaleX(-1) in CSS) */}
+        <div className={`rps-fist rps-fist--b rps-fist--${bFist.mod}`}>
+          <span className="rps-fist__emoji" key={`b-${phase}-${countdownStep}`}>
+            {bFist.emoji}
           </span>
-          {phase === PHASE.WAITING && (
+          {showReadyBadge && bIsReady && (
             <span className="rps-fist__badge rps-fist__badge--ready">Ready!</span>
           )}
-          {phase === PHASE.REVEAL && myRevealMove && (
-            <span className="rps-fist__label">{myRevealMove.toUpperCase()}</span>
+          {phase === PHASE.REVEAL && reveal?.moveB && (
+            <span className="rps-fist__label">{reveal.moveB.toUpperCase()}</span>
           )}
         </div>
 
@@ -231,7 +241,7 @@ export default function RPSGamePage() {
         )}
 
         {phase === PHASE.WAITING && (
-          <p className="rps-choose-hint">Waiting for {oppName || 'opponent'}... 🤔</p>
+          <p className="rps-choose-hint">Waiting for {oppName}... 🤔</p>
         )}
 
         {phase === PHASE.GAME_OVER && gameOver && (
@@ -249,7 +259,7 @@ export default function RPSGamePage() {
               {playAgainState === 'waiting' && (
                 <div className="rps-waiting-vote">
                   <div className="waiting-dots"><span /><span /><span /></div>
-                  <p>Waiting for {oppName || 'opponent'}...</p>
+                  <p>Waiting for {oppName}...</p>
                 </div>
               )}
               {playAgainState === 'asked' && (

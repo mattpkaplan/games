@@ -138,6 +138,13 @@ function setupSockets(io) {
       // Acknowledge to the player who just chose
       socket.emit('rps_waiting', {});
 
+      // Tell the OTHER player their opponent has chosen (without revealing the move)
+      const otherRole = role === 'a' ? 'b' : 'a';
+      const otherSocketId = state.roleToSocket[otherRole];
+      if (otherSocketId) {
+        io.to(otherSocketId).emit('opponent_chose', {});
+      }
+
       // Both have chosen → play "Rock Paper Scissors Shoot!" then reveal
       if (state.moves.a && state.moves.b) {
         runCountdownThenResolve(io, token, session, state);

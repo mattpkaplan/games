@@ -78,8 +78,8 @@
   -webkit-user-select: none;
 }
 
-/* My fist (right side) faces left */
-.rps-fist--me .rps-fist__emoji {
+/* Player B fist (right side) faces left */
+.rps-fist--b .rps-fist__emoji {
   transform: scaleX(-1);
 }
 
@@ -103,11 +103,11 @@
   100% { transform: scaleX(-1) translateY(0) rotate(0deg); }
 }
 
-/* opp is on the LEFT → plain shake; me is on the RIGHT → mirrored shake */
-.rps-fist--opp.rps-fist--shaking .rps-fist__emoji {
+/* A is on the LEFT → plain shake; B is on the RIGHT → mirrored shake */
+.rps-fist--a.rps-fist--shaking .rps-fist__emoji {
   animation: rps-shake 0.5s ease-in-out;
 }
-.rps-fist--me.rps-fist--shaking .rps-fist__emoji {
+.rps-fist--b.rps-fist--shaking .rps-fist__emoji {
   animation: rps-shake-mirrored 0.5s ease-in-out;
 }
 
@@ -125,10 +125,10 @@
   100% { transform: scaleX(-1) scale(1) rotate(0deg); }
 }
 
-.rps-fist--opp.rps-fist--reveal-opp .rps-fist__emoji {
+.rps-fist--a.rps-fist--reveal-a .rps-fist__emoji {
   animation: rps-bounce-in 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
-.rps-fist--me.rps-fist--reveal-me .rps-fist__emoji {
+.rps-fist--b.rps-fist--reveal-b .rps-fist__emoji {
   animation: rps-bounce-in-mirrored 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
@@ -142,9 +142,9 @@
 .rps-fist--loser  .rps-fist__emoji {
   animation: rps-winner-pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
-/* Don't mirror thumbs/👎 on my (right) fist */
-.rps-fist--me.rps-fist--winner .rps-fist__emoji,
-.rps-fist--me.rps-fist--loser  .rps-fist__emoji {
+/* Don't mirror thumbs/👎 on B's (right) fist */
+.rps-fist--b.rps-fist--winner .rps-fist__emoji,
+.rps-fist--b.rps-fist--loser  .rps-fist__emoji {
   transform: none;
   animation: rps-winner-pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
