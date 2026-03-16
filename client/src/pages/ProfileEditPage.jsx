@@ -1,8 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { api } from '../api.js';
 import { usePlayer, setPlayer } from '../hooks/usePlayer.js';
 import './ProfileEditPage.css';
+
+const ADMIN_PIN = '0790';
 
 const DIGITS = ['1','2','3','4','5','6','7','8','9','','0','⌫'];
 
@@ -35,6 +37,8 @@ function PinPad({ value, onChange, label }) {
 export default function ProfileEditPage() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const isAdminMode = searchParams.get('admin') === 'true';
   const { player: me } = usePlayer();
   const [profilePlayer, setProfilePlayer] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -77,7 +81,7 @@ export default function ProfileEditPage() {
     setError('');
     setSuccess('');
 
-    if (!currentPin || currentPin.length < 4) {
+    if (!isAdminMode && (!currentPin || currentPin.length < 4)) {
       return setError('Enter your current PIN to save changes');
     }
     if (changingPin) {
@@ -88,7 +92,7 @@ export default function ProfileEditPage() {
     setSaving(true);
     const form = new FormData();
     form.append('name', name);
-    form.append('currentPin', currentPin);
+    form.append('currentPin', isAdminMode ? ADMIN_PIN : currentPin);
     if (changingPin && newPin) form.append('newPin', newPin);
     if (avatarFile) form.append('avatar', avatarFile);
 
@@ -104,7 +108,7 @@ export default function ProfileEditPage() {
       setConfirmPin('');
       setChangingPin(false);
       setAvatarFile(null);
-      setTimeout(() => navigate('/'), 1200);
+      setTimeout(() => navigate(isAdminMode ? '/admin' : '/'), 1200);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -116,8 +120,8 @@ export default function ProfileEditPage() {
 
   return (
     <div className="page profile-edit-page">
-      <button className="back-btn" onClick={() => navigate('/')}>← Back</button>
-      <h1 className="page-title">Edit Profile ✏️</h1>
+      <button className="back-btn" onClick={() => navigate(isAdminMode ? '/admin' : '/')}>← Back</button>
+      <h1 className="page-title">{isAdminMode ? '⚙️ Admin Edit' : 'Edit Profile ✏️'}</h1>
 
       <form onSubmit={handleSave} className="profile-edit-form">
         {/* Avatar */}
@@ -142,12 +146,14 @@ export default function ProfileEditPage() {
             onChange={(e) => setName(e.target.value)} />
         </div>
 
-        {/* Current PIN (required to authorize any change) */}
-        <PinPad
-          value={currentPin}
-          onChange={setCurrentPin}
-          label="Your current PIN (required to save)"
-        />
+        {/* Current PIN (required to authorize any change, hidden in admin mode) */}
+        {!isAdminMode && (
+          <PinPad
+            value={currentPin}
+            onChange={setCurrentPin}
+            label="Your current PIN (required to save)"
+          />
+        )}
 
         {/* Toggle PIN change */}
         <button

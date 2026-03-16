@@ -8,6 +8,7 @@ import WaitingPage from './pages/WaitingPage.jsx';
 import JoinPage from './pages/JoinPage.jsx';
 import RPSGamePage from './pages/RPSGamePage.jsx';
 import ProfileEditPage from './pages/ProfileEditPage.jsx';
+import AdminPage from './pages/AdminPage.jsx';
 
 export default function App() {
   return (
@@ -20,6 +21,7 @@ export default function App() {
       <Route path="/join/:token" element={<JoinPage />} />
       <Route path="/game/:token" element={<RPSGamePage />} />
       <Route path="/profile/:id/edit" element={<ProfileEditPage />} />
+      <Route path="/admin" element={<AdminPage />} />
       <Route path="*" element={<Navigate to="/" />} />
     </Routes>
   );

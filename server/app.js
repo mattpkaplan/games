@@ -7,6 +7,7 @@ const rateLimit = require('express-rate-limit');
 
 const playersRouter = require('./routes/players');
 const sessionsRouter = require('./routes/sessions');
+const adminRouter = require('./routes/admin');
 
 const app = express();
 
@@ -44,6 +45,7 @@ const sessionLimiter = rateLimit({
 
 app.use('/api/players', playersRouter);
 app.use('/api/sessions', sessionLimiter, sessionsRouter);
+app.use('/api/admin', adminRouter);
 
 // Serve React app in production
 if (process.env.NODE_ENV === 'production') {

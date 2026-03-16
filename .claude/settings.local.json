@@ -22,7 +22,13 @@
       "mcp__Claude_Preview__preview_start",
       "Bash(lsof -ti:3001)",
       "Bash(xargs kill:*)",
-      "WebFetch(domain:family-games.onrender.com)"
+      "WebFetch(domain:family-games.onrender.com)",
+      "Bash(git pull:*)",
+      "Bash(git fetch:*)",
+      "Bash(git rebase:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)"
     ]
   }
 }

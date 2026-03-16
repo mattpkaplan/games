@@ -1,0 +1,199 @@
+/* ── Admin PIN gate ─────────────────────────────────── */
+.admin-pin-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: var(--color-bg);
+}
+
+.admin-pin-box {
+  background: white;
+  border-radius: 24px;
+  padding: 32px 24px;
+  width: 100%;
+  max-width: 360px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.10);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.admin-pin-icon { font-size: 3rem; }
+.admin-pin-title { font-size: 1.5rem; font-weight: 900; margin: 0; }
+.admin-pin-hint  { font-size: 0.9rem; color: #64748b; margin: 0; }
+
+.admin-pin-error {
+  color: var(--color-danger, #ef4444);
+  font-size: 0.85rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+/* ── Admin main page ────────────────────────────────── */
+.admin-page {
+  background: var(--color-bg);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 100px;
+}
+
+.admin-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 20px 8px;
+}
+
+.admin-title {
+  font-size: 1.4rem;
+  font-weight: 900;
+  margin: 0;
+}
+
+/* ── Player rows ────────────────────────────────────── */
+.admin-player-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px 16px;
+}
+
+.admin-player-row {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.admin-player-avatar {
+  flex-shrink: 0;
+  width: 54px;
+  height: 54px;
+}
+
+.admin-player-avatar img {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.admin-player-initials {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--color-primary), #a78bfa);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  font-weight: 900;
+}
+
+.admin-player-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.admin-player-name {
+  font-size: 1rem;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.admin-player-stats {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  font-size: 0.78rem;
+  color: #64748b;
+  font-weight: 600;
+}
+
+.admin-player-actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.admin-action-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.1s, opacity 0.1s;
+}
+.admin-action-btn:active { transform: scale(0.9); }
+.admin-action-btn--edit   { background: #ede9fe; }
+.admin-action-btn--delete { background: #fee2e2; }
+
+/* ── Footer ─────────────────────────────────────────── */
+.admin-footer {
+  padding: 16px;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: white;
+  border-top: 1px solid #f1f5f9;
+}
+
+/* ── Delete modal ───────────────────────────────────── */
+.admin-delete-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+  padding: 20px;
+}
+
+.admin-delete-modal {
+  background: white;
+  border-radius: 20px;
+  padding: 28px 24px;
+  width: 100%;
+  max-width: 340px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.admin-delete-modal h2 {
+  font-size: 1.2rem;
+  font-weight: 900;
+  margin: 0;
+}
+
+.admin-delete-modal p {
+  font-size: 0.9rem;
+  color: #64748b;
+  margin: 0;
+}
+
+.admin-delete-btns {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 4px;
+}

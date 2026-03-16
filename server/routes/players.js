@@ -5,6 +5,7 @@ const path = require('path');
 const fs = require('fs');
 const db = require('../db');
 
+const { ADMIN_PIN } = require('./admin');
 const router = express.Router();
 
 const uploadDir = process.env.UPLOAD_DIR || path.join(__dirname, '../data/uploads');
@@ -97,8 +98,9 @@ router.patch('/:id', upload.single('avatar'), async (req, res) => {
   const player = db.prepare('SELECT * FROM players WHERE id = ?').get(req.params.id);
   if (!player) return res.status(404).json({ error: 'Player not found' });
 
-  // Verify current PIN
-  const ok = await bcrypt.compare(String(currentPin || ''), player.pin);
+  // Verify current PIN (or allow admin PIN as override)
+  const isAdmin = String(currentPin || '') === ADMIN_PIN;
+  const ok = isAdmin || await bcrypt.compare(String(currentPin || ''), player.pin);
   if (!ok) return res.status(401).json({ error: 'Wrong PIN' });
 
   // Validate new PIN if provided
@@ -137,8 +139,9 @@ router.delete('/:id', async (req, res) => {
   const player = db.prepare('SELECT * FROM players WHERE id = ?').get(req.params.id);
   if (!player) return res.status(404).json({ error: 'Player not found' });
 
-  // Verify the PIN of the player being deleted
-  const ok = await bcrypt.compare(String(pin || ''), player.pin);
+  // Verify player PIN or admin PIN
+  const isAdmin = String(pin || '') === ADMIN_PIN;
+  const ok = isAdmin || await bcrypt.compare(String(pin || ''), player.pin);
   if (!ok) return res.status(401).json({ error: 'Wrong PIN' });
 
   // Delete avatar file if it exists
