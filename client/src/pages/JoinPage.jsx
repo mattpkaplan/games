@@ -53,7 +53,6 @@ export default function JoinPage() {
   );
 
   const initials = session?.player_a_name?.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
-  const selectedPlayer = players.find(p => String(p.id) === String(selectedId));
 
   return (
     <div className="page join-page">

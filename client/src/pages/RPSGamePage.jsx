@@ -14,7 +14,7 @@ const PHASE = {
   GAME_OVER:  'game_over',
 };
 
-const MOVE_EMOJI = { rock: '🤜', paper: '🖐️', scissors: '✌️' };
+const MOVE_EMOJI = { rock: '🤛', paper: '🖐️', scissors: '✌️' };
 const IDLE_FIST  = '✊';
 
 // side = 'a' (left) or 'b' (right); lastMove = previous round's move to show while waiting
