@@ -228,11 +228,11 @@ export default function LobbyPage() {
         </div>
       ) : (
         <div className="lobby-grid">
-          {players.map((p) => (
+          {players.filter((p) => p.id !== player?.id).map((p) => (
             <div key={p.id} className="lobby-card-wrap">
               <PlayerCard
                 player={p}
-                isMe={player?.id === p.id}
+                isMe={false}
                 onClick={() => handlePlayerTap(p)}
               />
             </div>
