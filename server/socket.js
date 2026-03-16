@@ -94,9 +94,19 @@ function setupSockets(io) {
         playerBName: fresh.player_b_name,
       });
 
-      // Both roles connected and session is active → tell both to start choosing
+      // Both roles connected and session is active → broadcast fresh names then start
       const bothConnected = state.roleToSocket.a && state.roleToSocket.b;
-      if (session.status === 'active' && bothConnected) {
+      if (fresh.status === 'active' && bothConnected) {
+        // Push updated session_state to EVERYONE so both sides see correct names
+        io.to(`session:${token}`).emit('session_state', {
+          status: fresh.status,
+          scores: state.scores,
+          round: state.currentRound,
+          playerAId: fresh.player_a_id,
+          playerBId: fresh.player_b_id,
+          playerAName: fresh.player_a_name,
+          playerBName: fresh.player_b_name,
+        });
         io.to(`session:${token}`).emit('opponent_joined', {});
         io.to(`session:${token}`).emit('choose_now', {});
       }
