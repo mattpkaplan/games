@@ -175,10 +175,10 @@ function runCountdownThenResolve(io, token, session, state) {
     }, i * 1000);
   });
 
-  // Reveal result right after "SHOOT!"
+  // Reveal result 500ms after "SHOOT!" (was 1000ms) so hands snap in on the beat
   setTimeout(() => {
     resolveRound(io, token, session, state);
-  }, 4000);
+  }, 3500);
 }
 
 function resolveRound(io, token, session, state) {

@@ -14,14 +14,16 @@ const PHASE = {
   GAME_OVER:  'game_over',
 };
 
-const MOVE_EMOJI = { rock: '✊', paper: '🖐️', scissors: '✌️' };
+const MOVE_EMOJI = { rock: '🤜', paper: '🖐️', scissors: '✌️' };
+const IDLE_FIST  = '🤜';
 
 function getFistState(phase, move, isMe, iWon, countdownStep) {
-  if (countdownStep)              return { emoji: '✊', mod: 'shaking' };
-  if (phase === PHASE.REVEAL)     return { emoji: MOVE_EMOJI[move] || '✊', mod: isMe ? 'reveal-me' : 'reveal-opp' };
-  if (phase === PHASE.GAME_OVER)  return { emoji: iWon ? '👍' : '😢', mod: iWon ? 'winner' : 'loser' };
-  if (phase === PHASE.WAITING && isMe) return { emoji: '✊', mod: 'ready' };
-  return { emoji: '✊', mod: 'idle' };
+  if (countdownStep === 'shoot')  return { emoji: MOVE_EMOJI[move] || IDLE_FIST, mod: isMe ? 'reveal-me' : 'reveal-opp' };
+  if (countdownStep)              return { emoji: IDLE_FIST, mod: 'shaking' };
+  if (phase === PHASE.REVEAL)     return { emoji: MOVE_EMOJI[move] || IDLE_FIST, mod: isMe ? 'reveal-me' : 'reveal-opp' };
+  if (phase === PHASE.GAME_OVER)  return { emoji: iWon ? '👍' : '👎', mod: iWon ? 'winner' : 'loser' };
+  if (phase === PHASE.WAITING && isMe) return { emoji: IDLE_FIST, mod: 'ready' };
+  return { emoji: IDLE_FIST, mod: 'idle' };
 }
 
 export default function RPSGamePage() {

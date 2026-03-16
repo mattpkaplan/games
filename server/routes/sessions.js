@@ -32,8 +32,7 @@ router.get('/:token', (req, res) => {
 
 // PATCH /api/sessions/:token/accept
 router.patch('/:token/accept', (req, res) => {
-  const { playerBId } = req.body;
-  if (!playerBId) return res.status(400).json({ error: 'playerBId required' });
+  const { playerBId } = req.body;   // optional — anonymous accept allowed
 
   const session = getSessionByToken(req.params.token);
   if (!session) return res.status(404).json({ error: 'Session not found' });

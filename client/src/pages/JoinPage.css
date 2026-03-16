@@ -1,12 +1,13 @@
 .join-page {
   align-items: center;
-  gap: 20px;
+  justify-content: center;
+  gap: 32px;
   min-height: 100dvh;
   text-align: center;
-  padding-top: 24px;
-  padding-bottom: 32px;
+  padding: 32px 24px;
 }
 
+/* Inviter card */
 .join-inviter {
   display: flex;
   flex-direction: column;
@@ -50,6 +51,7 @@
 .join-game-label {
   font-size: 0.9rem;
   color: var(--color-muted);
+  margin: 0;
 }
 
 .join-game-name {
@@ -61,18 +63,7 @@
   border-radius: 100px;
 }
 
-.join-question {
-  font-size: 1.4rem;
-  font-weight: 800;
-  color: var(--color-text);
-}
-
-.join-login-note {
-  font-size: 0.85rem;
-  color: var(--color-warning);
-  font-weight: 600;
-}
-
+/* Big two-button choice */
 .join-buttons {
   display: flex;
   flex-direction: column;
@@ -86,175 +77,42 @@
   color: white;
   min-height: 96px;
   font-size: 1.4rem;
+  font-weight: 800;
   border-radius: 24px;
   border: none;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 4px;
+  cursor: pointer;
   box-shadow: 0 8px 24px rgba(34, 197, 94, 0.3);
+  transition: transform 0.1s, background 0.15s;
 }
 
-.join-yes-btn:hover {
-  background: #16a34a;
-}
+.join-yes-btn:hover:not(:disabled) { background: #16a34a; }
+.join-yes-btn:active:not(:disabled) { transform: scale(0.96); }
+.join-yes-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
 .join-no-btn {
   background: #f3f4f6;
   color: var(--color-muted);
   min-height: 80px;
   font-size: 1.1rem;
+  font-weight: 700;
   border-radius: 20px;
   border: 2px solid #e5e7eb;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 4px;
+  cursor: pointer;
+  transition: transform 0.1s, background 0.15s;
 }
 
-.join-no-btn:hover {
-  background: #e5e7eb;
-}
+.join-no-btn:hover:not(:disabled) { background: #e5e7eb; }
+.join-no-btn:active:not(:disabled) { transform: scale(0.96); }
 
 .join-btn-icon {
   font-size: 2rem;
   line-height: 1;
-}
-
-/* Who are you section */
-.join-who-section {
-  width: 100%;
-}
-
-.join-who-label {
-  font-size: 1rem;
-  font-weight: 800;
-  color: var(--color-text);
-  margin-bottom: 12px;
-}
-
-.join-player-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
-  gap: 10px;
-}
-
-.join-player-btn {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
-  padding: 12px 8px;
-  border: 3px solid #e5e7eb;
-  border-radius: 16px;
-  background: white;
-  cursor: pointer;
-  transition: border-color 0.15s, transform 0.1s;
-}
-
-.join-player-btn--selected {
-  border-color: var(--color-primary);
-  background: #f3f0ff;
-}
-
-.join-player-btn:active {
-  transform: scale(0.93);
-}
-
-.join-player-avatar {
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
-  object-fit: cover;
-}
-
-.join-player-initials {
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, var(--color-primary), #a78bfa);
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.2rem;
-  font-weight: 900;
-}
-
-.join-player-name {
-  font-size: 0.7rem;
-  font-weight: 700;
-  text-align: center;
-  color: var(--color-text);
-}
-
-/* PIN section */
-.join-pin-section {
-  width: 100%;
-  background: white;
-  border-radius: 20px;
-  padding: 20px;
-  box-shadow: var(--shadow);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
-}
-
-.join-pin-label {
-  font-size: 0.9rem;
-  font-weight: 700;
-  color: var(--color-muted);
-}
-
-.join-pin-dots {
-  display: flex;
-  gap: 16px;
-}
-
-.join-pin-dot {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  border: 3px solid var(--color-primary);
-  transition: background 0.2s;
-}
-
-.join-pin-dot--filled {
-  background: var(--color-primary);
-}
-
-.join-pin-pad {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
-  width: 100%;
-  max-width: 240px;
-}
-
-.join-pin-key {
-  height: 52px;
-  border: 2px solid #e5e7eb;
-  border-radius: 12px;
-  background: white;
-  font-size: 1.2rem;
-  font-weight: 700;
-  cursor: pointer;
-  transition: transform 0.1s, background 0.1s;
-}
-
-.join-pin-key:active:not(:disabled) {
-  transform: scale(0.9);
-  background: #f3f0ff;
-}
-
-.join-pin-key--empty {
-  visibility: hidden;
-  pointer-events: none;
-}
-
-/* Disabled yes button */
-.join-yes-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
 }
