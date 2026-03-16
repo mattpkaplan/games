@@ -90,7 +90,7 @@ export default function JoinPage() {
       {/* Who are you? — compact avatar row (hidden if already logged in) */}
       {!player && (
         <div className="join-who">
-          <p className="join-who-label">Who are you?</p>
+          <p className="join-who-label">{selectedId ? '👋 Playing as…' : '👆 Tap your photo to continue'}</p>
           <div className="join-who-row">
             {players.map(p => {
               const ini = p.name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
@@ -115,7 +115,7 @@ export default function JoinPage() {
         <button
           className="btn join-yes-btn"
           onClick={handleAccept}
-          disabled={responding}
+          disabled={responding || (!player && !selectedId)}
         >
           <span className="join-btn-icon">✅</span>
           <span>Let's Play{selectedPlayer ? `, ${selectedPlayer.name.split(' ')[0]}!` : '!'}</span>
