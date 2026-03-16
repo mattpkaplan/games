@@ -38,9 +38,16 @@ router.patch('/:token/accept', (req, res) => {
   if (!session) return res.status(404).json({ error: 'Session not found' });
   if (session.status !== 'pending') return res.status(409).json({ error: `Session is ${session.status}` });
 
-  db.prepare(`
-    UPDATE game_sessions SET status = 'active', player_b_id = ? WHERE token = ?
-  `).run(playerBId, req.params.token);
+  // Only update player_b_id if provided — don't overwrite the id stored at invite creation
+  if (playerBId) {
+    db.prepare(`
+      UPDATE game_sessions SET status = 'active', player_b_id = ? WHERE token = ?
+    `).run(playerBId, req.params.token);
+  } else {
+    db.prepare(`
+      UPDATE game_sessions SET status = 'active' WHERE token = ?
+    `).run(req.params.token);
+  }
 
   // Notify Player A via socket (emitted from socket.js via global io)
   const io = req.app.get('io');
