@@ -15,7 +15,7 @@ const PHASE = {
 };
 
 const MOVE_EMOJI = { rock: '🤜', paper: '🖐️', scissors: '✌️' };
-const IDLE_FIST  = '✊';
+const IDLE_FIST  = '🤜';
 
 function getFistState(phase, move, isMe, iWon, countdownStep) {
   if (countdownStep === 'shoot')  return { emoji: MOVE_EMOJI[move] || IDLE_FIST, mod: isMe ? 'reveal-me' : 'reveal-opp' };
