@@ -45,6 +45,7 @@ export default function RPSGamePage() {
   const [gameOver,       setGameOver]       = useState(null);
   const [playAgainState, setPlayAgainState] = useState('idle');
   const [playAgainAsker, setPlayAgainAsker] = useState(null);
+  const [opponentLeft,   setOpponentLeft]   = useState(false);
   const [sessionInfo,    setSessionInfo]    = useState(null);
   const [currentRound,   setCurrentRound]   = useState(1);
 
@@ -104,6 +105,8 @@ export default function RPSGamePage() {
       setPlayAgainAsker(byPlayerName); setPlayAgainState('declined');
     });
 
+    s.on('opponent_left', () => setOpponentLeft(true));
+
     s.on('new_game', () => {
       setGameOver(null); setReveal(null); setMyMove(null); setCountdownStep(null);
       setOpponentChose(false); setLastMoves({ a: null, b: null });
@@ -113,7 +116,7 @@ export default function RPSGamePage() {
 
     return () => {
       ['session_state','my_role','opponent_joined','countdown_step','choose_now','rps_waiting',
-       'opponent_chose','rps_reveal','rps_game_over','play_again_requested','play_again_declined','new_game']
+       'opponent_chose','rps_reveal','rps_game_over','play_again_requested','play_again_declined','new_game','opponent_left']
         .forEach(e => s.off(e));
       s.disconnect();
     };
@@ -256,36 +259,45 @@ export default function RPSGamePage() {
               {iWon ? 'You Win! 🎉' : `${gameOver.winnerName} Wins!`}
             </h2>
             <div className="rps-play-again-area">
-              {playAgainState === 'idle' && (
-                <button className="btn btn-primary btn-xl btn-full" onClick={() => {
-                  setPlayAgainState('waiting');
-                  socket.emit('play_again_request', { token, playerId: player?.id });
-                }}>Play Again! 🔁</button>
-              )}
-              {playAgainState === 'waiting' && (
-                <div className="rps-waiting-vote">
-                  <div className="waiting-dots"><span /><span /><span /></div>
-                  <p>Waiting for {oppName}...</p>
-                </div>
-              )}
-              {playAgainState === 'asked' && (
-                <div className="rps-rematch-request">
-                  <p className="rps-rematch-msg"><strong>{playAgainAsker}</strong> wants a rematch!</p>
-                  <button className="btn btn-success btn-xl btn-full"
-                    onClick={() => socket.emit('play_again_accept', { token })}>
-                    ✅ Yes, let's go!
-                  </button>
-                  <button className="btn btn-outline btn-full" onClick={() => {
-                    socket.emit('play_again_decline', { token, playerId: player?.id });
-                    navigate('/');
-                  }}>😴 Sorry, not now</button>
-                </div>
-              )}
-              {playAgainState === 'declined' && (
+              {opponentLeft ? (
                 <div className="rps-declined-msg">
-                  <span className="rps-declined-icon">😴</span>
-                  <p><strong>{playAgainAsker}</strong> is done for now!</p>
+                  <span className="rps-declined-icon">👋</span>
+                  <p><strong>{oppName}</strong> went back to the lobby</p>
                 </div>
+              ) : (
+                <>
+                  {playAgainState === 'idle' && (
+                    <button className="btn btn-primary btn-xl btn-full" onClick={() => {
+                      setPlayAgainState('waiting');
+                      socket.emit('play_again_request', { token, playerId: player?.id });
+                    }}>Play Again! 🔁</button>
+                  )}
+                  {playAgainState === 'waiting' && (
+                    <div className="rps-waiting-vote">
+                      <div className="waiting-dots"><span /><span /><span /></div>
+                      <p>Waiting for {oppName}...</p>
+                    </div>
+                  )}
+                  {playAgainState === 'asked' && (
+                    <div className="rps-rematch-request">
+                      <p className="rps-rematch-msg"><strong>{playAgainAsker}</strong> wants a rematch!</p>
+                      <button className="btn btn-success btn-xl btn-full"
+                        onClick={() => socket.emit('play_again_accept', { token })}>
+                        ✅ Yes, let's go!
+                      </button>
+                      <button className="btn btn-outline btn-full" onClick={() => {
+                        socket.emit('play_again_decline', { token, playerId: player?.id });
+                        navigate('/');
+                      }}>😴 Sorry, not now</button>
+                    </div>
+                  )}
+                  {playAgainState === 'declined' && (
+                    <div className="rps-declined-msg">
+                      <span className="rps-declined-icon">😴</span>
+                      <p><strong>{playAgainAsker}</strong> is done for now!</p>
+                    </div>
+                  )}
+                </>
               )}
               {playAgainState !== 'asked' && (
                 <button className="btn btn-outline btn-full" onClick={() => navigate('/')}>

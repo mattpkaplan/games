@@ -191,6 +191,12 @@ function setupSockets(io) {
           delete state.socketToRole[socket.id];
           if (state.roleToSocket[role] === socket.id) {
             delete state.roleToSocket[role];
+            // Tell the other player their opponent left
+            const otherRole = role === 'a' ? 'b' : 'a';
+            const otherSocketId = state.roleToSocket[otherRole];
+            if (otherSocketId) {
+              io.to(otherSocketId).emit('opponent_left', {});
+            }
           }
         }
       }
