@@ -22,7 +22,7 @@ function getFistState(phase, move, side, isWinner, countdownStep, isReady, lastM
   if (countdownStep === 'shoot') return { emoji: MOVE_EMOJI[move] || IDLE_FIST, mod: `reveal-${side}` };
   if (countdownStep)             return { emoji: IDLE_FIST, mod: 'shaking' };
   if (phase === PHASE.REVEAL)    return { emoji: MOVE_EMOJI[move] || IDLE_FIST, mod: `reveal-${side}` };
-  if (phase === PHASE.GAME_OVER) return { emoji: isWinner ? '👍' : '👎', mod: isWinner ? 'winner' : 'loser' };
+  if (phase === PHASE.GAME_OVER) return { emoji: MOVE_EMOJI[move] || IDLE_FIST, mod: isWinner ? 'winner' : 'loser' };
   if (isReady)                   return { emoji: IDLE_FIST, mod: 'ready' };
   // Keep showing the previous round's move until a new choice is made
   if (lastMove)                  return { emoji: MOVE_EMOJI[lastMove], mod: 'idle' };
@@ -184,6 +184,9 @@ export default function RPSGamePage() {
 
         {/* Player A fist — left side, faces right (no mirror) */}
         <div className={`rps-fist rps-fist--a rps-fist--${aFist.mod}`}>
+          {phase === PHASE.GAME_OVER && aIsWinner && (
+            <span className="rps-fist__trophy">🏆</span>
+          )}
           <span className="rps-fist__emoji" key={`a-${phase}-${countdownStep}`}>
             {aFist.emoji}
           </span>
@@ -212,6 +215,9 @@ export default function RPSGamePage() {
 
         {/* Player B fist — right side, faces left (scaleX(-1) in CSS) */}
         <div className={`rps-fist rps-fist--b rps-fist--${bFist.mod}`}>
+          {phase === PHASE.GAME_OVER && bIsWinner && (
+            <span className="rps-fist__trophy">🏆</span>
+          )}
           <span className="rps-fist__emoji" key={`b-${phase}-${countdownStep}`}>
             {bFist.emoji}
           </span>

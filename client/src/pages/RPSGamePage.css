@@ -78,8 +78,8 @@
   -webkit-user-select: none;
 }
 
-/* Player A fist (left side) faces right — mirrored */
-.rps-fist--a .rps-fist__emoji {
+/* Player B fist (right side) faces left — mirrored */
+.rps-fist--b .rps-fist__emoji {
   transform: scaleX(-1);
 }
 
@@ -103,12 +103,12 @@
   100% { transform: scaleX(-1) translateY(0) rotate(0deg); }
 }
 
-/* A is on the LEFT (mirrored) → mirrored shake; B is on the RIGHT → plain shake */
+/* A is on the LEFT (no mirror) → plain shake; B is on the RIGHT (mirrored) → mirrored shake */
 .rps-fist--a.rps-fist--shaking .rps-fist__emoji {
-  animation: rps-shake-mirrored 0.5s ease-in-out;
+  animation: rps-shake 0.5s ease-in-out;
 }
 .rps-fist--b.rps-fist--shaking .rps-fist__emoji {
-  animation: rps-shake 0.5s ease-in-out;
+  animation: rps-shake-mirrored 0.5s ease-in-out;
 }
 
 /* BOUNCE IN — reveal */
@@ -126,10 +126,10 @@
 }
 
 .rps-fist--a.rps-fist--reveal-a .rps-fist__emoji {
-  animation: rps-bounce-in-mirrored 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+  animation: rps-bounce-in 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 .rps-fist--b.rps-fist--reveal-b .rps-fist__emoji {
-  animation: rps-bounce-in 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+  animation: rps-bounce-in-mirrored 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 /* WINNER / LOSER */
@@ -142,11 +142,11 @@
 .rps-fist--loser  .rps-fist__emoji {
   animation: rps-winner-pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
-/* Don't mirror thumbs/👎 on A's (left) fist */
-.rps-fist--a.rps-fist--winner .rps-fist__emoji,
-.rps-fist--a.rps-fist--loser  .rps-fist__emoji {
-  transform: none;
-  animation: rps-winner-pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+/* ── Trophy ─────────────────────────────────────────────── */
+.rps-fist__trophy {
+  font-size: 2rem;
+  line-height: 1;
+  animation: badge-pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 /* ── Ready badge ────────────────────────────────────────── */

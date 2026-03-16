@@ -83,8 +83,8 @@ function setupSockets(io) {
         WHERE s.token = ?
       `).get(token);
 
-      // Emit current state to the joining player
-      socket.emit('session_state', {
+      // Always broadcast latest names to the whole room so everyone stays in sync
+      io.to(`session:${token}`).emit('session_state', {
         status: fresh.status,
         scores: state.scores,
         round: state.currentRound,
@@ -94,19 +94,9 @@ function setupSockets(io) {
         playerBName: fresh.player_b_name,
       });
 
-      // Both roles connected and session is active → broadcast fresh names then start
+      // Start the game when both roles are connected
       const bothConnected = state.roleToSocket.a && state.roleToSocket.b;
       if (fresh.status === 'active' && bothConnected) {
-        // Push updated session_state to EVERYONE so both sides see correct names
-        io.to(`session:${token}`).emit('session_state', {
-          status: fresh.status,
-          scores: state.scores,
-          round: state.currentRound,
-          playerAId: fresh.player_a_id,
-          playerBId: fresh.player_b_id,
-          playerAName: fresh.player_a_name,
-          playerBName: fresh.player_b_name,
-        });
         io.to(`session:${token}`).emit('opponent_joined', {});
         io.to(`session:${token}`).emit('choose_now', {});
       }
