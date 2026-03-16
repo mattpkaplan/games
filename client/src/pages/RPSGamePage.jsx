@@ -249,7 +249,7 @@ export default function RPSGamePage() {
           </>
         )}
 
-        {phase === PHASE.WAITING && (
+        {phase === PHASE.WAITING && !countdownStep && (
           <p className="rps-choose-hint">Waiting for {oppName}... 🤔</p>
         )}
 
