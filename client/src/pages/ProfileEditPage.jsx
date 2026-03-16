@@ -5,31 +5,65 @@ import { usePlayer, setPlayer } from '../hooks/usePlayer.js';
 import './ProfileEditPage.css';
 
 const ADMIN_PIN = '0790';
-
 const DIGITS = ['1','2','3','4','5','6','7','8','9','','0','⌫'];
 
-function PinPad({ value, onChange, label }) {
-  function handleDigit(d) {
-    if (d === '⌫') onChange(value.slice(0, -1));
-    else if (value.length < 4) onChange(value + d);
+// Single PIN pad that collects entry → confirm in sequence
+function NewPinFlow({ onComplete, onCancel }) {
+  const [stage, setStage] = useState('enter'); // 'enter' | 'confirm'
+  const [first, setFirst] = useState('');
+  const [second, setSecond] = useState('');
+  const [mismatch, setMismatch] = useState(false);
+
+  function handleDigit(d, current, setCurrent) {
+    if (d === '⌫') { setCurrent(v => v.slice(0, -1)); setMismatch(false); return; }
+    if (current.length >= 4) return;
+    const next = current + d;
+    setCurrent(next);
+    if (next.length === 4) {
+      if (stage === 'enter') {
+        setStage('confirm');
+      } else {
+        if (next === first) {
+          onComplete(first);
+        } else {
+          setMismatch(true);
+          setTimeout(() => {
+            setStage('enter');
+            setFirst('');
+            setSecond('');
+            setMismatch(false);
+          }, 700);
+        }
+      }
+    }
   }
+
+  const value = stage === 'enter' ? first : second;
+  const setter = stage === 'enter' ? setFirst : setSecond;
+
   return (
     <div className="pin-field">
-      {label && <p className="pin-field-label">{label}</p>}
+      <p className="pin-field-label" style={{ color: mismatch ? 'var(--color-danger)' : undefined }}>
+        {mismatch ? "PINs didn't match — try again" : stage === 'enter' ? 'Enter new PIN' : 'Confirm new PIN'}
+      </p>
       <div className="pin-dots">
         {Array.from({ length: 4 }, (_, i) => (
-          <div key={i} className={`pin-dot ${i < value.length ? 'pin-dot--filled' : ''}`} />
+          <div key={i} className={`pin-dot ${i < value.length ? 'pin-dot--filled' : ''} ${mismatch ? 'pin-dot--error' : ''}`} />
         ))}
       </div>
       <div className="pin-pad-grid">
         {DIGITS.map((d, i) => (
           <button key={i} type="button"
             className={`pin-key ${d === '' ? 'pin-key--empty' : ''}`}
-            onClick={() => d !== '' && handleDigit(d)}
+            onClick={() => d !== '' && handleDigit(d, value, setter)}
             disabled={d === ''}
           >{d}</button>
         ))}
       </div>
+      <button type="button" className="btn btn-outline btn-full" style={{ marginTop: 8 }}
+        onClick={onCancel}>
+        Cancel
+      </button>
     </div>
   );
 }
@@ -40,16 +74,12 @@ export default function ProfileEditPage() {
   const [searchParams] = useSearchParams();
   const isAdminMode = searchParams.get('admin') === 'true';
   const { player: me } = usePlayer();
-  const [profilePlayer, setProfilePlayer] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Form state
   const [name, setName] = useState('');
   const [avatarFile, setAvatarFile] = useState(null);
   const [preview, setPreview] = useState(null);
-  const [currentPin, setCurrentPin] = useState('');
   const [newPin, setNewPin] = useState('');
-  const [confirmPin, setConfirmPin] = useState('');
   const [changingPin, setChangingPin] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
@@ -61,7 +91,6 @@ export default function ProfileEditPage() {
       .then((players) => {
         const p = players.find((p) => String(p.id) === String(id));
         if (!p) { navigate('/'); return; }
-        setProfilePlayer(p);
         setName(p.name);
         setPreview(p.avatar_url || null);
       })
@@ -80,32 +109,21 @@ export default function ProfileEditPage() {
     e.preventDefault();
     setError('');
     setSuccess('');
-
-    if (!isAdminMode && (!currentPin || currentPin.length < 4)) {
-      return setError('Enter your current PIN to save changes');
-    }
-    if (changingPin) {
-      if (newPin.length !== 4) return setError('New PIN must be 4 digits');
-      if (newPin !== confirmPin) return setError('New PINs don\'t match');
-    }
-
     setSaving(true);
+
     const form = new FormData();
     form.append('name', name);
-    form.append('currentPin', isAdminMode ? ADMIN_PIN : currentPin);
-    if (changingPin && newPin) form.append('newPin', newPin);
+    if (isAdminMode) form.append('currentPin', ADMIN_PIN);
+    if (newPin) form.append('newPin', newPin);
     if (avatarFile) form.append('avatar', avatarFile);
 
     try {
       const updated = await api.patch(`/api/players/${id}`, form);
-      // If editing own profile, update session
       if (me && String(me.id) === String(id)) {
         setPlayer({ ...me, ...updated });
       }
       setSuccess('Profile updated! ✅');
-      setCurrentPin('');
       setNewPin('');
-      setConfirmPin('');
       setChangingPin(false);
       setAvatarFile(null);
       setTimeout(() => navigate(isAdminMode ? '/admin' : '/'), 1200);
@@ -146,37 +164,33 @@ export default function ProfileEditPage() {
             onChange={(e) => setName(e.target.value)} />
         </div>
 
-        {/* Current PIN (required to authorize any change, hidden in admin mode) */}
-        {!isAdminMode && (
-          <PinPad
-            value={currentPin}
-            onChange={setCurrentPin}
-            label="Your current PIN (required to save)"
+        {/* PIN change — single sequential pad */}
+        {!changingPin ? (
+          <button type="button" className="btn btn-primary btn-full"
+            onClick={() => setChangingPin(true)}>
+            🔑 Change PIN
+          </button>
+        ) : (
+          <NewPinFlow
+            onComplete={(pin) => { setNewPin(pin); setChangingPin(false); }}
+            onCancel={() => { setChangingPin(false); setNewPin(''); }}
           />
         )}
 
-        {/* Toggle PIN change */}
-        <button
-          type="button"
-          className={`btn btn-full ${changingPin ? 'btn-outline' : 'btn-primary'}`}
-          onClick={() => { setChangingPin(!changingPin); setNewPin(''); setConfirmPin(''); }}
-        >
-          {changingPin ? 'Cancel PIN Change' : '🔑 Change PIN'}
-        </button>
-
-        {changingPin && (
-          <>
-            <PinPad value={newPin} onChange={setNewPin} label="New PIN" />
-            <PinPad value={confirmPin} onChange={setConfirmPin} label="Confirm new PIN" />
-          </>
+        {newPin && !changingPin && (
+          <p style={{ textAlign: 'center', color: '#22c55e', fontWeight: 700, fontSize: '0.9rem' }}>
+            ✅ New PIN set — save to apply
+          </p>
         )}
 
         {error && <div className="error-msg">{error}</div>}
         {success && <div className="success-msg">{success}</div>}
 
-        <button type="submit" className="btn btn-success btn-full btn-xl" disabled={saving}>
-          {saving ? 'Saving...' : 'Save Changes ✅'}
-        </button>
+        {!changingPin && (
+          <button type="submit" className="btn btn-success btn-full btn-xl" disabled={saving}>
+            {saving ? 'Saving...' : 'Save Changes ✅'}
+          </button>
+        )}
       </form>
     </div>
   );

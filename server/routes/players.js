@@ -92,16 +92,19 @@ router.get('/me', (req, res) => {
 });
 
 // PATCH /api/players/:id — update profile (name, phone, avatar, optionally new PIN)
-// Requires current PIN to authorize
+// Allowed if: session owner, admin PIN, or player's own PIN
 router.patch('/:id', upload.single('avatar'), async (req, res) => {
   const { name, phone, currentPin, newPin } = req.body;
   const player = db.prepare('SELECT * FROM players WHERE id = ?').get(req.params.id);
   if (!player) return res.status(404).json({ error: 'Player not found' });
 
-  // Verify current PIN (or allow admin PIN as override)
+  // Allow if the logged-in session owns this profile, or admin PIN, or player's own PIN
+  const isSessionOwner = String(req.session?.playerId) === String(player.id);
   const isAdmin = String(currentPin || '') === ADMIN_PIN;
-  const ok = isAdmin || await bcrypt.compare(String(currentPin || ''), player.pin);
-  if (!ok) return res.status(401).json({ error: 'Wrong PIN' });
+  const pinOk = currentPin ? await bcrypt.compare(String(currentPin), player.pin) : false;
+  if (!isSessionOwner && !isAdmin && !pinOk) {
+    return res.status(401).json({ error: 'Not authorized' });
+  }
 
   // Validate new PIN if provided
   if (newPin && !/^\d{4}$/.test(newPin)) {
