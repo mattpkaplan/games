@@ -203,11 +203,6 @@ export default function LobbyPage() {
           >
             ⚙️ Manage
           </button>
-          {!player && (
-            <button className="btn btn-primary" onClick={() => setShowLogin(true)}>
-              Sign In
-            </button>
-          )}
         </div>
       </div>
 
@@ -215,6 +210,8 @@ export default function LobbyPage() {
         <AvailabilityToggle
           available={Boolean(player.available)}
           onChange={toggleAvailability}
+          player={player}
+          onEdit={() => navigate(`/profile/${player.id}/edit`)}
         />
       )}
 
@@ -247,12 +244,6 @@ export default function LobbyPage() {
         <Link to="/register" className="btn btn-outline" style={{ marginTop: 'auto' }}>
           + Add Family Member
         </Link>
-        {player && (
-          <button className="btn btn-outline" style={{ marginTop: 8, fontSize: '0.85rem' }}
-            onClick={() => navigate(`/profile/${player.id}/edit`)}>
-            ✏️ Edit My Profile
-          </button>
-        )}
       </div>
     </div>
   );
