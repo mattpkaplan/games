@@ -55,14 +55,10 @@ function setupSockets(io) {
         role = 'a';
       } else if (session.player_b_id && String(playerId) === String(session.player_b_id)) {
         role = 'b';
-      } else if (session.status === 'active' && !session.player_b_id) {
-        // Anonymous accept: anyone who isn't player A is player B
+      } else if (!state.roleToSocket.b && String(playerId) !== String(session.player_a_id)) {
+        // The invite token is the auth — whoever arrives that isn't player A is player B.
+        // (Handles the case where player B isn't logged in when they click the link.)
         role = 'b';
-        // Persist their player ID so moves can be attributed correctly
-        if (playerId) {
-          db.prepare('UPDATE game_sessions SET player_b_id = ? WHERE token = ? AND player_b_id IS NULL')
-            .run(playerId, token);
-        }
       }
 
       if (role) {
