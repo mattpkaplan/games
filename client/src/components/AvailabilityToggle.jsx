@@ -5,26 +5,30 @@ export default function AvailabilityToggle({ available, onChange, player, onEdit
   const initials = player?.name?.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2) || '?';
 
   return (
-    <div className={`avail-toggle ${available ? 'avail-toggle--on' : 'avail-toggle--off'}`}>
-      {/* Avatar + edit pencil */}
-      <div className="avail-toggle__user" onClick={onEdit} title="Edit profile">
+    <div className="avail-bar">
+      {/* Avatar */}
+      <div className="avail-bar__avatar">
         {player?.avatar_url
-          ? <img src={player.avatar_url} alt={player.name} className="avail-toggle__avatar" />
-          : <div className="avail-toggle__initials">{initials}</div>
+          ? <img src={player.avatar_url} alt={player.name} className="avail-bar__avatar-img" />
+          : <div className="avail-bar__initials">{initials}</div>
         }
-        <span className="avail-toggle__edit">✏️</span>
       </div>
 
-      {/* Tap to toggle availability */}
+      {/* Toggle pill */}
       <button
-        className="avail-toggle__btn"
+        className={`avail-bar__toggle ${available ? 'avail-bar__toggle--on' : 'avail-bar__toggle--off'}`}
         onClick={() => onChange(!available)}
-        aria-label={available ? 'You are available. Tap to go busy.' : 'You are busy. Tap to go available.'}
+        aria-label={available ? 'Tap to go busy' : 'Tap to go available'}
       >
-        <span className={`avail-toggle__dot ${available ? 'avail-toggle__dot--on' : 'avail-toggle__dot--off'}`} />
-        <span className="avail-toggle__label">
-          {available ? "I'm ready to play!" : "I'm busy"}
+        <span className="avail-bar__toggle-knob" />
+        <span className="avail-bar__toggle-label">
+          {available ? "I'm Ready!" : "I'm Busy"}
         </span>
+      </button>
+
+      {/* Edit pencil */}
+      <button className="avail-bar__edit" onClick={onEdit} title="Edit profile">
+        ✏️
       </button>
     </div>
   );
