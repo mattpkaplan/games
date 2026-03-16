@@ -15,7 +15,7 @@ const PHASE = {
 };
 
 const MOVE_EMOJI = { rock: '🤜', paper: '🖐️', scissors: '✌️' };
-const IDLE_FIST  = '🤜';
+const IDLE_FIST  = '✊';
 
 function getFistState(phase, move, isMe, iWon, countdownStep) {
   if (countdownStep === 'shoot')  return { emoji: MOVE_EMOJI[move] || IDLE_FIST, mod: isMe ? 'reveal-me' : 'reveal-opp' };
@@ -45,6 +45,19 @@ export default function RPSGamePage() {
 
   const socketRef = useRef(socket);
 
+  // Separate effect: assign role whenever player or sessionInfo loads (fixes race condition)
+  useEffect(() => {
+    if (!sessionInfo) return;
+    if (player && String(sessionInfo.playerAId) === String(player.id)) {
+      setMyRole('a');
+    } else if (player && sessionInfo.playerBId && String(sessionInfo.playerBId) === String(player.id)) {
+      setMyRole('b');
+    } else if (!sessionInfo.playerBId) {
+      // Anonymous accept: anyone who isn't player A is player B
+      setMyRole('b');
+    }
+  }, [player?.id, sessionInfo?.playerAId, sessionInfo?.playerBId]);
+
   useEffect(() => {
     const s = socketRef.current;
     s.connect();
@@ -54,10 +67,6 @@ export default function RPSGamePage() {
       setSessionInfo(data);
       setScores(data.scores || { a: 0, b: 0 });
       setCurrentRound(data.round || 1);
-      if (player) {
-        if      (String(data.playerAId) === String(player.id)) setMyRole('a');
-        else if (String(data.playerBId) === String(player.id)) setMyRole('b');
-      }
     });
 
     s.on('opponent_joined', () => {});

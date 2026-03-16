@@ -51,8 +51,19 @@ function setupSockets(io) {
 
       // Assign role based on player ID
       let role = null;
-      if (String(playerId) === String(session.player_a_id)) role = 'a';
-      else if (String(playerId) === String(session.player_b_id)) role = 'b';
+      if (String(playerId) === String(session.player_a_id)) {
+        role = 'a';
+      } else if (session.player_b_id && String(playerId) === String(session.player_b_id)) {
+        role = 'b';
+      } else if (session.status === 'active' && !session.player_b_id) {
+        // Anonymous accept: anyone who isn't player A is player B
+        role = 'b';
+        // Persist their player ID so moves can be attributed correctly
+        if (playerId) {
+          db.prepare('UPDATE game_sessions SET player_b_id = ? WHERE token = ? AND player_b_id IS NULL')
+            .run(playerId, token);
+        }
+      }
 
       if (role) {
         const prevSocket = state.roleToSocket[role];
@@ -63,15 +74,24 @@ function setupSockets(io) {
         state.socketToRole[socket.id] = role;
       }
 
+      // Re-fetch session in case we just set player_b_id above
+      const fresh = db.prepare(`
+        SELECT s.*, pa.name AS player_a_name, pb.name AS player_b_name
+        FROM game_sessions s
+        JOIN players pa ON pa.id = s.player_a_id
+        LEFT JOIN players pb ON pb.id = s.player_b_id
+        WHERE s.token = ?
+      `).get(token);
+
       // Emit current state to the joining player
       socket.emit('session_state', {
-        status: session.status,
+        status: fresh.status,
         scores: state.scores,
         round: state.currentRound,
-        playerAId: session.player_a_id,
-        playerBId: session.player_b_id,
-        playerAName: session.player_a_name,
-        playerBName: session.player_b_name,
+        playerAId: fresh.player_a_id,
+        playerBId: fresh.player_b_id,
+        playerAName: fresh.player_a_name,
+        playerBName: fresh.player_b_name,
       });
 
       // Both roles connected and session is active → tell both to start choosing
@@ -92,9 +112,13 @@ function setupSockets(io) {
 
       const state = getOrCreateGameState(token);
 
-      let role = null;
-      if (String(playerId) === String(session.player_a_id)) role = 'a';
-      else if (String(playerId) === String(session.player_b_id)) role = 'b';
+      // Use the socket's assigned role (handles anonymous player B)
+      let role = state.socketToRole[socket.id];
+      if (!role) {
+        // Fallback: derive from player ID
+        if (String(playerId) === String(session.player_a_id)) role = 'a';
+        else if (session.player_b_id && String(playerId) === String(session.player_b_id)) role = 'b';
+      }
       if (!role) return;
 
       // Only record once per round
