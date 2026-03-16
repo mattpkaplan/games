@@ -15,7 +15,7 @@ const PHASE = {
 };
 
 const MOVE_EMOJI = { rock: '🤜', paper: '🖐️', scissors: '✌️' };
-const IDLE_FIST  = '🤜';
+const IDLE_FIST  = '✊';
 
 function getFistState(phase, move, isMe, iWon, countdownStep) {
   if (countdownStep === 'shoot')  return { emoji: MOVE_EMOJI[move] || IDLE_FIST, mod: isMe ? 'reveal-me' : 'reveal-opp' };
@@ -151,11 +151,11 @@ export default function RPSGamePage() {
   return (
     <div className="rps-page">
 
-      {/* ── HEADER ── */}
+      {/* ── HEADER ── opponent left, me right ── */}
       <div className="rps-header">
         <div className="rps-player-col">
-          <span className="rps-player-name">{myName}</span>
-          <StarScore score={myScore} total={3} />
+          <span className="rps-player-name">{oppName || 'Opponent'}</span>
+          <StarScore score={oppScore} total={3} />
         </div>
         <div className="rps-round-info">
           <span className={`rps-round-badge ${phase === PHASE.GAME_OVER ? 'rps-round-badge--over' : ''}`}>
@@ -163,24 +163,21 @@ export default function RPSGamePage() {
           </span>
         </div>
         <div className="rps-player-col">
-          <span className="rps-player-name">{oppName || 'Opponent'}</span>
-          <StarScore score={oppScore} total={3} />
+          <span className="rps-player-name">{myName}</span>
+          <StarScore score={myScore} total={3} />
         </div>
       </div>
 
-      {/* ── ARENA ── */}
+      {/* ── ARENA ── opponent left, me right ── */}
       <div className="rps-arena">
 
-        {/* My fist (left, faces right) */}
-        <div className={`rps-fist rps-fist--me rps-fist--${myFist.mod}`}>
-          <span className="rps-fist__emoji" key={`me-${phase}-${countdownStep}`}>
-            {myFist.emoji}
+        {/* Opponent fist (left, faces right) */}
+        <div className={`rps-fist rps-fist--opp rps-fist--${oppFist.mod}`}>
+          <span className="rps-fist__emoji" key={`opp-${phase}-${countdownStep}`}>
+            {oppFist.emoji}
           </span>
-          {phase === PHASE.WAITING && (
-            <span className="rps-fist__badge rps-fist__badge--ready">Ready!</span>
-          )}
-          {phase === PHASE.REVEAL && myRevealMove && (
-            <span className="rps-fist__label">{myRevealMove.toUpperCase()}</span>
+          {phase === PHASE.REVEAL && oppRevealMove && (
+            <span className="rps-fist__label">{oppRevealMove.toUpperCase()}</span>
           )}
         </div>
 
@@ -199,13 +196,16 @@ export default function RPSGamePage() {
           )}
         </div>
 
-        {/* Opponent fist (right, mirrored to face left) */}
-        <div className={`rps-fist rps-fist--opp rps-fist--${oppFist.mod}`}>
-          <span className="rps-fist__emoji" key={`opp-${phase}-${countdownStep}`}>
-            {oppFist.emoji}
+        {/* My fist (right, faces left) */}
+        <div className={`rps-fist rps-fist--me rps-fist--${myFist.mod}`}>
+          <span className="rps-fist__emoji" key={`me-${phase}-${countdownStep}`}>
+            {myFist.emoji}
           </span>
-          {phase === PHASE.REVEAL && oppRevealMove && (
-            <span className="rps-fist__label">{oppRevealMove.toUpperCase()}</span>
+          {phase === PHASE.WAITING && (
+            <span className="rps-fist__badge rps-fist__badge--ready">Ready!</span>
+          )}
+          {phase === PHASE.REVEAL && myRevealMove && (
+            <span className="rps-fist__label">{myRevealMove.toUpperCase()}</span>
           )}
         </div>
 
