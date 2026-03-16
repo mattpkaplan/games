@@ -184,9 +184,6 @@ export default function RPSGamePage() {
 
         {/* Player A fist — left side, faces right (no mirror) */}
         <div className={`rps-fist rps-fist--a rps-fist--${aFist.mod}`}>
-          {phase === PHASE.GAME_OVER && aIsWinner && (
-            <span className="rps-fist__trophy">🏆</span>
-          )}
           <span className="rps-fist__emoji" key={`a-${phase}-${countdownStep}`}>
             {aFist.emoji}
           </span>
@@ -211,13 +208,13 @@ export default function RPSGamePage() {
           {phase === PHASE.CONNECTING && (
             <div className="waiting-dots"><span /><span /><span /></div>
           )}
+          {phase === PHASE.GAME_OVER && (
+            <span className="rps-trophy-center">🏆</span>
+          )}
         </div>
 
         {/* Player B fist — right side, faces left (scaleX(-1) in CSS) */}
         <div className={`rps-fist rps-fist--b rps-fist--${bFist.mod}`}>
-          {phase === PHASE.GAME_OVER && bIsWinner && (
-            <span className="rps-fist__trophy">🏆</span>
-          )}
           <span className="rps-fist__emoji" key={`b-${phase}-${countdownStep}`}>
             {bFist.emoji}
           </span>
