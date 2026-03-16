@@ -79,7 +79,7 @@ export default function JoinPage() {
           disabled={responding}
         >
           <span className="join-btn-icon">✅</span>
-          <span>Let's Play, {session?.player_b_name?.split(' ')[0] || 'Me'}!</span>
+          <span>Let's Play!</span>
         </button>
 
         <button
