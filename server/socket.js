@@ -90,6 +90,11 @@ function setupSockets(io) {
         playerBName: fresh.player_b_name,
       });
 
+      // Tell this specific socket which role it was assigned (works even if not logged in)
+      if (role) {
+        socket.emit('my_role', { role });
+      }
+
       // Start the game when both roles are connected
       const bothConnected = state.roleToSocket.a && state.roleToSocket.b;
       if (fresh.status === 'active' && bothConnected) {

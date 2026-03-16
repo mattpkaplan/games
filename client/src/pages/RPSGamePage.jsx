@@ -50,16 +50,11 @@ export default function RPSGamePage() {
 
   const socketRef = useRef(socket);
 
-  // Assign role whenever player or sessionInfo loads (fixes race condition)
+  // Role assignment: first try to match by player ID; the server also sends my_role as a fallback
   useEffect(() => {
-    if (!sessionInfo) return;
-    if (player && String(sessionInfo.playerAId) === String(player.id)) {
-      setMyRole('a');
-    } else if (player && sessionInfo.playerBId && String(sessionInfo.playerBId) === String(player.id)) {
-      setMyRole('b');
-    } else if (!sessionInfo.playerBId) {
-      setMyRole('b'); // anonymous accept
-    }
+    if (!sessionInfo || !player) return;
+    if (String(sessionInfo.playerAId) === String(player.id)) setMyRole('a');
+    else if (sessionInfo.playerBId && String(sessionInfo.playerBId) === String(player.id)) setMyRole('b');
   }, [player?.id, sessionInfo?.playerAId, sessionInfo?.playerBId]);
 
   useEffect(() => {
@@ -72,6 +67,9 @@ export default function RPSGamePage() {
       setScores(data.scores || { a: 0, b: 0 });
       setCurrentRound(data.round || 1);
     });
+
+    // Server tells us our role directly — works even when not logged in
+    s.on('my_role', ({ role }) => setMyRole(role));
 
     s.on('opponent_joined', () => {});
     s.on('countdown_step', ({ step }) => setCountdownStep(step));
@@ -114,7 +112,7 @@ export default function RPSGamePage() {
     });
 
     return () => {
-      ['session_state','opponent_joined','countdown_step','choose_now','rps_waiting',
+      ['session_state','my_role','opponent_joined','countdown_step','choose_now','rps_waiting',
        'opponent_chose','rps_reveal','rps_game_over','play_again_requested','play_again_declined','new_game']
         .forEach(e => s.off(e));
       s.disconnect();
@@ -132,8 +130,9 @@ export default function RPSGamePage() {
   const bName = sessionInfo?.playerBName || '...';
   const oppName = myRole === 'a' ? bName : aName;
 
-  const iWon     = gameOver ? String(gameOver.winnerId) === String(player?.id) : false;
   const aIsWinner = gameOver ? String(gameOver.winnerId) === String(sessionInfo?.playerAId) : false;
+  // Use role-based win detection so it works even when player B isn't logged in
+  const iWon = gameOver ? (myRole === 'a' ? aIsWinner : !aIsWinner) : false;
   const bIsWinner = gameOver ? !aIsWinner : false;
 
   // Who has chosen (shows "Ready!" badge)
