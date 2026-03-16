@@ -18,6 +18,10 @@ export default function AdminPage() {
   const [deleting, setDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState('');
 
+  // Reset stats state
+  const [showResetConfirm, setShowResetConfirm] = useState(false);
+  const [resetting, setResetting] = useState(false);
+
   function handleDigit(d) {
     if (d === '⌫') { setPin(p => p.slice(0, -1)); setPinError(''); }
     else if (pin.length < 4) {
@@ -43,6 +47,21 @@ export default function AdminPage() {
       .catch(console.error)
       .finally(() => setLoading(false));
   }, [authenticated]);
+
+  async function handleResetStats() {
+    setResetting(true);
+    try {
+      await fetch(`/api/admin/stats?adminPin=${ADMIN_PIN}`, { method: 'DELETE' });
+      // Reload stats
+      const res = await fetch(`/api/admin/players?adminPin=${ADMIN_PIN}`);
+      setPlayers(await res.json());
+      setShowResetConfirm(false);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setResetting(false);
+    }
+  }
 
   async function handleDelete(player) {
     setDeleting(true);
@@ -147,7 +166,28 @@ export default function AdminPage() {
         <button className="btn btn-primary btn-full" onClick={() => navigate('/register')}>
           + Add Family Member
         </button>
+        <button className="btn btn-outline btn-full" onClick={() => setShowResetConfirm(true)}>
+          🗑️ Reset All Stats
+        </button>
       </div>
+
+      {/* Reset stats confirmation modal */}
+      {showResetConfirm && (
+        <div className="admin-delete-overlay">
+          <div className="admin-delete-modal">
+            <h2>Reset All Stats?</h2>
+            <p>This clears every game result. Player accounts are kept.</p>
+            <div className="admin-delete-btns">
+              <button className="btn btn-danger btn-full" onClick={handleResetStats} disabled={resetting}>
+                {resetting ? 'Resetting...' : '🗑️ Yes, Reset Stats'}
+              </button>
+              <button className="btn btn-outline btn-full" onClick={() => setShowResetConfirm(false)}>
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Delete confirmation modal */}
       {deleteTarget && (

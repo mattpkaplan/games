@@ -33,5 +33,12 @@ router.get('/players', requireAdmin, (req, res) => {
   res.json(players);
 });
 
+// DELETE /api/admin/stats — wipe all game history, keep players
+router.delete('/stats', requireAdmin, (req, res) => {
+  db.prepare('DELETE FROM rps_rounds').run();
+  db.prepare('DELETE FROM game_sessions').run();
+  res.json({ ok: true });
+});
+
 module.exports = router;
 module.exports.ADMIN_PIN = ADMIN_PIN;
